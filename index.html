@@ -123,6 +123,9 @@ table.inv th { background: var(--ai); color: #fff; padding: 6px 8px; text-align:
 table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space: nowrap; background: #fff; }
 table.inv tr.low-row td { background: #FDF3EF; }
 .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: var(--ai-deep); color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13.5px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); z-index: 50; display: none; }
+#login-gate { position: fixed; inset: 0; background: var(--hakuji); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 26px 22px; width: min(100%, 380px); display: flex; flex-direction: column; gap: 12px; box-shadow: 0 6px 24px rgba(20,40,60,0.08); }
+.login-card h2 { font-family: var(--serif); text-align: center; color: var(--ai-deep); letter-spacing: 0.08em; font-size: 20px; }
 .foot { text-align: center; font-size: 11.5px; color: #8A97A0; padding-top: 26px; letter-spacing: 0.08em; }
 @media (max-width: 520px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -136,6 +139,17 @@ table.inv tr.low-row td { background: #FDF3EF; }
 </style>
 </head>
 <body>
+<div id="login-gate">
+  <div class="login-card">
+    <div style="text-align:center"><span class="brand-mark" style="display:inline-flex">薬</span></div>
+    <h2>OTC在庫台帳</h2>
+    <p class="hint" style="text-align:center">熊本県薬剤師会 会員専用ページです。<br>配布された会員IDとパスワードを入力してください。</p>
+    <label>会員ID <input id="login-id" autocomplete="username"></label>
+    <label>パスワード <input type="password" id="login-pass" autocomplete="current-password" onkeydown="if(event.key==='Enter')checkLogin()"></label>
+    <button class="btn big" onclick="checkLogin()">入室する</button>
+    <p class="hint" id="login-err" style="color:var(--shu);text-align:center"></p>
+  </div>
+</div>
 <div class="chrome">
   <header class="header">
     <div class="brand">
@@ -296,6 +310,29 @@ table.inv tr.low-row td { background: #FDF3EF; }
 
 <script>
 "use strict";
+/* ============ 入室(簡易ロック) ============ */
+const LOGIN_ID = "kumayaku";
+const LOGIN_PASS_HASH = "19b0e8bb8e289f230232172761af078f0f435f0658bdef4ff4174dcf1e9660ec";
+async function sha256hex(s){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+async function checkLogin(){
+  const id = document.getElementById("login-id").value.trim().toLowerCase();
+  const pw = document.getElementById("login-pass").value;
+  const err = document.getElementById("login-err");
+  try {
+    const h = await sha256hex(pw);
+    if (id === LOGIN_ID && h === LOGIN_PASS_HASH){
+      localStorage.setItem("otc-auth-v1", "ok");
+      document.getElementById("login-gate").style.display = "none";
+    } else {
+      err.textContent = "会員IDまたはパスワードが違います。";
+    }
+  } catch(e){
+    err.textContent = "この画面は https:// のアドレスで開いてください。";
+  }
+}
 /* ============ 定数 ============ */
 const CATEGORIES = ["要指導医薬品","第1類医薬品","指定第2類医薬品","第2類医薬品","第3類医薬品","医薬部外品","サプリメント・健康食品","食品・菓子","飲料","日用品・雑貨"];
 const CAT_SHORT = {"要指導医薬品":"要指導","第1類医薬品":"第①類","指定第2類医薬品":"指定第②類","第2類医薬品":"第②類","第3類医薬品":"第③類","医薬部外品":"部外品","サプリメント・健康食品":"サプリ","食品・菓子":"食品","飲料":"飲料","日用品・雑貨":"日用品"};
@@ -639,18 +676,19 @@ function renderList(){
   }
   if (listMode === "table"){
     area.innerHTML = '<div class="table-wrap"><table class="inv"><thead><tr>'
-      + '<th>商品名</th><th>区分</th><th>価格</th><th>在庫</th><th>発注点</th><th>期限</th><th>メーカー</th><th>JAN</th><th>メモ</th><th>更新日</th>'
+      + '<th>選</th><th>商品名</th><th>区分</th><th>価格</th><th>在庫</th><th>発注点</th><th>期限</th><th>メーカー</th><th>JAN</th><th>メモ</th><th>更新日</th>'
       + '</tr></thead><tbody>'
       + arr.map(it =>
         '<tr class="'+(it.qty<=it.reorder?'low-row':'')+'" onclick="editItem(\''+it.id+'\')" style="cursor:pointer">'
-        + '<td>'+esc(it.name)+(it.ranyo?' <span class="ranyo-flag">濫用防止</span>':'')+'</td>'
+        + '<td onclick="event.stopPropagation()"><input type="checkbox" '+(selected.has(it.id)?'checked':'')+' onchange="toggleSelect(\''+it.id+'\')" aria-label="値札用に選択"></td>'
+        + '<td>'+(it.name?esc(it.name):"(名称未設定)")+(it.ranyo?' <span class="ranyo-flag">濫用防止</span>':'')+'</td>'
         + '<td style="color:'+(CAT_COLOR[it.category]||"#5C6B78")+';font-weight:600">'+(CAT_SHORT[it.category]||it.category)+'</td>'
         + '<td>'+yen(it.price)+'</td><td>'+it.qty+'</td><td>'+it.reorder+'</td>'
         + '<td>'+(it.expiry||"")+'</td><td>'+esc(it.maker||"")+'</td>'
         + '<td style="font-family:monospace">'+it.jan+'</td>'
         + '<td>'+esc(it.memo||"")+'</td><td>'+(it.updatedAt||"")+'</td></tr>'
       ).join("")
-      + '</tbody></table></div><p class="hint" style="margin-top:6px">横にスクロールすると全ての列が見られます。行をタップすると編集できます。</p>';
+      + '</tbody></table></div><p class="hint" style="margin-top:6px">横にスクロールすると全ての列が見られます。行をタップすると編集、左端のチェックで値札用に選択できます。</p>';
     return;
   }
   area.innerHTML = '<ul class="stock-list">' + arr.map(it =>
@@ -766,12 +804,16 @@ function renderPop(){
 }
 
 /* ============ 会員間共有(Google Apps Script サーバー) ============ */
+function updateBrand(){
+  const p = S.pharmacy;
+  document.getElementById("brand-sub").textContent = p.name ? p.name + (p.area ? "(" + p.area + ")" : "") : "市販薬の登録・値札・備蓄共有";
+}
 function savePharmacy(){
   S.pharmacy.name = document.getElementById("ph-name").value.trim();
   S.pharmacy.area = document.getElementById("ph-area").value.trim();
   S.gasUrl = document.getElementById("gas-url").value.trim();
   save();
-  document.getElementById("brand-sub").textContent = S.pharmacy.name || "市販薬の登録・値札・備蓄共有";
+  updateBrand();
 }
 function saveKeys(){
   S.apiKeys.rakuten = document.getElementById("k-rakuten").value.trim();
@@ -871,7 +913,8 @@ document.getElementById("gas-url").value = S.gasUrl || "";
 document.getElementById("k-rakuten").value = S.apiKeys.rakuten || "";
 document.getElementById("k-rakuten-key").value = S.apiKeys.rakutenKey || "";
 document.getElementById("k-jancode").value = S.apiKeys.jancode || "";
-document.getElementById("brand-sub").textContent = S.pharmacy.name || "市販薬の登録・値札・備蓄共有";
+updateBrand();
+if (localStorage.getItem("otc-auth-v1") === "ok") document.getElementById("login-gate").style.display = "none";
 renderList();
 </script>
 </body>
