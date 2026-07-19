@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>OTC在庫台帳 — 熊本県薬剤師会</title>
+<title>OTC在庫台帳 — とみながグループ</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <style>
 :root {
@@ -143,7 +143,7 @@ table.inv tr.low-row td { background: #FDF3EF; }
   <div class="login-card">
     <div style="text-align:center"><span class="brand-mark" style="display:inline-flex">薬</span></div>
     <h2>OTC在庫台帳</h2>
-    <p class="hint" style="text-align:center">熊本県薬剤師会 会員専用ページです。<br>配布された会員IDとパスワードを入力してください。</p>
+    <p class="hint" style="text-align:center">とみながグループ 専用ページです。<br>配布された会員IDとパスワードを入力してください。</p>
     <label>会員ID <input id="login-id" autocomplete="username"></label>
     <label>パスワード <input type="password" id="login-pass" autocomplete="current-password" onkeydown="if(event.key==='Enter')checkLogin()"></label>
     <button class="btn big" onclick="checkLogin()">入室する</button>
@@ -166,11 +166,21 @@ table.inv tr.low-row td { background: #FDF3EF; }
     <button class="tab active" data-tab="scan" onclick="showTab('scan')">スキャン登録</button>
     <button class="tab" data-tab="list" onclick="showTab('list')">在庫リスト</button>
     <button class="tab" data-tab="print" onclick="showTab('print')">値札・POP</button>
-    <button class="tab" data-tab="share" onclick="showTab('share')">会員間共有</button>
+    <button class="tab" data-tab="share" onclick="showTab('share')">店舗間共有</button>
   </nav>
 
   <!-- ============ スキャン登録 ============ -->
   <section class="panel active" id="tab-scan">
+    <details class="settings" id="pharmacy-settings">
+      <summary>薬局情報の設定(画面上部に表示されます)</summary>
+      <div class="form" style="padding-top:10px">
+        <div class="grid2">
+          <label>薬局名 <input id="ph-name2" placeholder="例:とみなが薬局 ○○店" onchange="savePharmacyMain()"></label>
+          <label>地区 <input id="ph-area2" placeholder="例:熊本市中央区" onchange="savePharmacyMain()"></label>
+        </div>
+        <p class="hint">店舗ごとにその店の名前を設定してください。画面上部のタイトル下と、備蓄共有時の表示に使われます。</p>
+      </div>
+    </details>
     <div class="scan-box">
       <button class="btn big" id="scan-toggle" onclick="toggleScan()">カメラでスキャン開始</button>
       <div id="jan-reader"></div>
@@ -282,7 +292,7 @@ table.inv tr.low-row td { background: #FDF3EF; }
   <!-- ============ 会員間共有 ============ -->
   <section class="panel" id="tab-share">
     <div class="share-note">
-      熊本県薬剤師会 会員間の備蓄情報共有です。アップロードすると、共有サーバーに接続している<strong>すべての会員</strong>が薬局名・品目・在庫数を閲覧できます。
+      とみながグループ 店舗間の備蓄情報共有です。アップロードすると、共有サーバーに接続している<strong>すべての店舗</strong>が薬局名・品目・在庫数を閲覧できます。
     </div>
     <div class="form">
       <div class="grid2">
@@ -300,19 +310,19 @@ table.inv tr.low-row td { background: #FDF3EF; }
       <p class="hint" id="share-msg"></p>
     </div>
     <div class="divider"><span>備蓄をさがす</span></div>
-    <input class="search" id="share-q" placeholder="商品名・JANで全薬局を横断検索" oninput="renderShared()">
+    <input class="search" id="share-q" placeholder="商品名・JANで全店舗を横断検索" oninput="renderShared()">
     <div id="share-area"></div>
   </section>
 
   <div class="toast" id="toast"></div>
-  <footer class="foot">OTC在庫台帳 — 熊本県薬剤師会 会員向けツール</footer>
+  <footer class="foot">OTC在庫台帳 — とみながグループ 店舗向けツール</footer>
 </div>
 
 <script>
 "use strict";
 /* ============ 入室(簡易ロック) ============ */
-const LOGIN_ID = "kumayaku";
-const LOGIN_PASS_HASH = "19b0e8bb8e289f230232172761af078f0f435f0658bdef4ff4174dcf1e9660ec";
+const LOGIN_ID = "1";
+const LOGIN_PASS_HASH = "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b";
 async function sha256hex(s){
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
@@ -808,12 +818,24 @@ function updateBrand(){
   const p = S.pharmacy;
   document.getElementById("brand-sub").textContent = p.name ? p.name + (p.area ? "(" + p.area + ")" : "") : "市販薬の登録・値札・備蓄共有";
 }
+function syncPharmacyInputs(){
+  document.getElementById("ph-name").value = S.pharmacy.name || "";
+  document.getElementById("ph-area").value = S.pharmacy.area || "";
+  document.getElementById("ph-name2").value = S.pharmacy.name || "";
+  document.getElementById("ph-area2").value = S.pharmacy.area || "";
+}
+function savePharmacyMain(){
+  S.pharmacy.name = document.getElementById("ph-name2").value.trim();
+  S.pharmacy.area = document.getElementById("ph-area2").value.trim();
+  save(); updateBrand(); syncPharmacyInputs();
+}
 function savePharmacy(){
   S.pharmacy.name = document.getElementById("ph-name").value.trim();
   S.pharmacy.area = document.getElementById("ph-area").value.trim();
   S.gasUrl = document.getElementById("gas-url").value.trim();
   save();
   updateBrand();
+  syncPharmacyInputs();
 }
 function saveKeys(){
   S.apiKeys.rakuten = document.getElementById("k-rakuten").value.trim();
@@ -907,8 +929,8 @@ function showTab(k){
 /* ============ 起動 ============ */
 load();
 fillCategorySelects();
-document.getElementById("ph-name").value = S.pharmacy.name || "";
-document.getElementById("ph-area").value = S.pharmacy.area || "";
+syncPharmacyInputs();
+if (!S.pharmacy.name) document.getElementById("pharmacy-settings").open = true;
 document.getElementById("gas-url").value = S.gasUrl || "";
 document.getElementById("k-rakuten").value = S.apiKeys.rakuten || "";
 document.getElementById("k-rakuten-key").value = S.apiKeys.rakutenKey || "";
