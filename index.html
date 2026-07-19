@@ -187,14 +187,13 @@ table.inv tr.low-row td { background: #FDF3EF; }
         <p class="brand-sub" id="brand-sub">市販薬の登録・値札・備蓄共有</p>
       </div>
     </div>
-    <button class="low-chip" id="low-chip" onclick="showTab('list')"></button>
   </header>
 
   <nav class="tabs" role="tablist">
     <button class="tab active" data-tab="scan" onclick="showTab('scan')">スキャン登録</button>
     <button class="tab" data-tab="list" onclick="showTab('list')">在庫リスト</button>
     <button class="tab" data-tab="print" onclick="showTab('print')">値札・POP</button>
-    <button class="tab" data-tab="share" onclick="showTab('share')">設定</button>
+    <button class="tab" data-tab="share" onclick="showTab('share')">その他</button>
   </nav>
 
   <!-- ============ スキャン登録 ============ -->
@@ -740,7 +739,6 @@ function setCatFilter(c){
   renderList();
 }
 function renderList(){
-  const low = S.items.filter(it => it.qty <= it.reorder);
   const cf0 = document.getElementById("cat-filter").value;
   const counts = {};
   S.items.forEach(it => { counts[it.category] = (counts[it.category] || 0) + 1; });
@@ -749,9 +747,6 @@ function renderList(){
     + CATEGORIES.filter(c => counts[c]).map(c =>
       '<button class="cat-chip" style="border-color:' + CAT_COLOR[c] + ';' + (cf0===c ? 'background:'+CAT_COLOR[c]+';color:#fff' : 'color:'+CAT_COLOR[c]) + '" onclick="setCatFilter(\''+c+'\')">' + CAT_SHORT[c] + ' ' + counts[c] + '</button>'
     ).join("");
-  const chip = document.getElementById("low-chip");
-  chip.style.display = low.length ? "block" : "none";
-  chip.textContent = "低在庫 " + low.length + " 品目";
 
   const q = document.getElementById("q").value.trim().toLowerCase();
   const cf = document.getElementById("cat-filter").value;
