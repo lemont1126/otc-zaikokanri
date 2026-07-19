@@ -60,15 +60,15 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .search { flex: 1; min-width: 180px; }
 .select-bar { font-size: 13.5px; background: #EDF2F0; border-radius: 8px; padding: 8px 12px; display: none; }
 .stock-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.stock-item { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
+.stock-item { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
 .stock-item.low { border-left: 4px solid var(--shu); }
-.stock-main { flex: 1; min-width: 0; cursor: pointer; }
+.stock-main { flex: 1 1 220px; min-width: 0; cursor: pointer; }
 .stock-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .stock-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .stock-sub { display: flex; gap: 10px; font-size: 12px; color: #5C6B78; flex-wrap: wrap; }
 .low-flag { color: var(--shu); font-weight: 600; }
 .cat-badge { border: 1px solid; border-radius: 4px; font-size: 10.5px; padding: 1px 5px; white-space: nowrap; flex-shrink: 0; }
-.qty-ctrl { display: flex; align-items: center; gap: 6px; }
+.qty-ctrl { display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .qty-ctrl button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: #F7F9F8; font-size: 16px; cursor: pointer; }
 .qty { min-width: 26px; text-align: center; font-family: var(--serif); font-size: 18px; font-variant-numeric: tabular-nums; }
 .del { border: none; background: none; color: #9AA7AF; font-size: 18px; cursor: pointer; padding: 4px; }
@@ -657,7 +657,7 @@ function renderList(){
     '<li class="stock-item' + (it.qty<=it.reorder?' low':'') + '">'
     + '<input type="checkbox" ' + (selected.has(it.id)?'checked':'') + ' onchange="toggleSelect(\''+it.id+'\')" aria-label="値札用に選択">'
     + '<div class="stock-main" onclick="editItem(\''+it.id+'\')">'
-    +   '<div class="stock-top"><span class="cat-badge" style="border-color:'+CAT_COLOR[it.category]+';color:'+CAT_COLOR[it.category]+'">'+CAT_SHORT[it.category]+'</span><span class="stock-name">'+esc(it.name)+'</span></div>'
+    +   '<div class="stock-top"><span class="cat-badge" style="border-color:'+CAT_COLOR[it.category]+';color:'+CAT_COLOR[it.category]+'">'+CAT_SHORT[it.category]+'</span><span class="stock-name">'+(it.name?esc(it.name):"(名称未設定)")+'</span></div>'
     +   '<div class="stock-sub">' + (it.ranyo?'<span class="ranyo-flag">濫用防止</span>':'') + (it.maker?'<span>'+esc(it.maker)+'</span>':'') + '<span>'+yen(it.price)+'</span>' + (it.expiry?'<span>期限 '+it.expiry+'</span>':'') + (it.qty<=it.reorder?'<span class="low-flag">要発注</span>':'') + '</div>'
     + '</div>'
     + '<div class="qty-ctrl"><button onclick="changeQty(\''+it.id+'\',-1)" aria-label="1減らす">−</button><span class="qty">'+it.qty+'</span><button onclick="changeQty(\''+it.id+'\',1)" aria-label="1増やす">＋</button></div>'
