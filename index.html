@@ -111,6 +111,16 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .hit-name { font-weight: 600; }
 .hit-qty { color: var(--take); margin-left: 8px; }
 .hit-ph { font-size: 12.5px; color: #5C6B78; }
+.chk-row { flex-direction: row; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); }
+.chk-row input { width: auto; }
+.ranyo-flag { color: #8A6400; background: #FBEFC7; border: 1px solid #E3C65A; border-radius: 4px; font-size: 10.5px; padding: 1px 5px; white-space: nowrap; }
+.tag-ranyo { background: #F5D547; color: #4A3B00; font-size: 10px; letter-spacing: 0.1em; padding: 2px 0; font-weight: 600; }
+.pop-ranyo { font-size: 11.5px; color: #8A6400; background: #FBEFC7; border-radius: 4px; padding: 2px 8px; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+table.inv { border-collapse: collapse; font-size: 12px; min-width: 760px; width: 100%; }
+table.inv th { background: var(--ai); color: #fff; padding: 6px 8px; text-align: left; white-space: nowrap; }
+table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space: nowrap; background: #fff; }
+table.inv tr.low-row td { background: #FDF3EF; }
 .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: var(--ai-deep); color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13.5px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); z-index: 50; display: none; }
 .foot { text-align: center; font-size: 11.5px; color: #8A97A0; padding-top: 26px; letter-spacing: 0.08em; }
 @media (max-width: 520px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
@@ -179,6 +189,7 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
         <label>使用期限 <input type="date" id="f-expiry"></label>
         <label>メモ <input id="f-memo" placeholder="陳列場所・仕入先など"></label>
       </div>
+      <label class="chk-row"><input type="checkbox" id="f-ranyo"> 指定濫用防止医薬品に該当(値札・一覧に表示されます)</label>
       <div class="row gap">
         <button class="btn" id="save-btn" onclick="saveItem()">在庫に登録</button>
         <button class="btn ghost" onclick="clearForm()">クリア</button>
@@ -214,6 +225,7 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
     <div class="row gap wrap">
       <input class="search" id="q" placeholder="商品名・JAN・メーカーで検索" oninput="renderList()">
       <select id="cat-filter" onchange="renderList()"></select>
+      <button class="btn ghost" id="view-toggle" onclick="toggleView()">表形式</button>
       <button class="btn ghost" onclick="exportCsv()">CSV出力</button>
     </div>
     <div class="select-bar" id="select-bar"></div>
@@ -272,9 +284,9 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 <script>
 "use strict";
 /* ============ 定数 ============ */
-const CATEGORIES = ["要指導医薬品","第1類医薬品","指定第2類医薬品","第2類医薬品","第3類医薬品","医薬部外品"];
-const CAT_SHORT = {"要指導医薬品":"要指導","第1類医薬品":"第①類","指定第2類医薬品":"指定第②類","第2類医薬品":"第②類","第3類医薬品":"第③類","医薬部外品":"部外品"};
-const CAT_COLOR = {"要指導医薬品":"#8A2A2A","第1類医薬品":"#B0483A","指定第2類医薬品":"#A8622C","第2類医薬品":"#8A7326","第3類医薬品":"#3E7C59","医薬部外品":"#5C6B78"};
+const CATEGORIES = ["要指導医薬品","第1類医薬品","指定第2類医薬品","第2類医薬品","第3類医薬品","医薬部外品","サプリメント・健康食品","食品・菓子","飲料","日用品・雑貨"];
+const CAT_SHORT = {"要指導医薬品":"要指導","第1類医薬品":"第①類","指定第2類医薬品":"指定第②類","第2類医薬品":"第②類","第3類医薬品":"第③類","医薬部外品":"部外品","サプリメント・健康食品":"サプリ","食品・菓子":"食品","飲料":"飲料","日用品・雑貨":"日用品"};
+const CAT_COLOR = {"要指導医薬品":"#6A3FA0","第1類医薬品":"#C0392B","指定第2類医薬品":"#D97B29","第2類医薬品":"#3E7C59","第3類医薬品":"#2E6DA4","医薬部外品":"#5C6B78","サプリメント・健康食品":"#647D8C","食品・菓子":"#8A6D3B","飲料":"#4E7F8C","日用品・雑貨":"#75808A"};
 
 /* ============ 状態 ============ */
 let S = { items: [], master: {}, pharmacy: { id: rid(), name: "", area: "" }, apiKeys: { rakuten: "", rakutenKey: "", jancode: "" }, gasUrl: "" };
@@ -476,7 +488,8 @@ function readForm(){
     qty: Math.max(0, parseInt(document.getElementById("f-qty").value,10) || 0),
     reorder: Math.max(0, parseInt(document.getElementById("f-reorder").value,10) || 0),
     expiry: document.getElementById("f-expiry").value,
-    memo: document.getElementById("f-memo").value.trim()
+    memo: document.getElementById("f-memo").value.trim(),
+    ranyo: document.getElementById("f-ranyo").checked
   };
 }
 function fillForm(o){
@@ -489,6 +502,7 @@ function fillForm(o){
   document.getElementById("f-reorder").value = (o.reorder===0||o.reorder) ? o.reorder : 2;
   document.getElementById("f-expiry").value = o.expiry || "";
   document.getElementById("f-memo").value = o.memo || "";
+  document.getElementById("f-ranyo").checked = !!o.ranyo;
 }
 function clearForm(){
   editingId = null;
@@ -606,21 +620,43 @@ function renderList(){
     area.innerHTML = '<div class="empty"><p>まだ在庫がありません。</p><button class="btn" onclick="showTab(\'scan\')">最初の商品をスキャンする</button></div>';
     return;
   }
+  if (listMode === "table"){
+    area.innerHTML = '<div class="table-wrap"><table class="inv"><thead><tr>'
+      + '<th>商品名</th><th>区分</th><th>価格</th><th>在庫</th><th>発注点</th><th>期限</th><th>メーカー</th><th>JAN</th><th>メモ</th><th>更新日</th>'
+      + '</tr></thead><tbody>'
+      + arr.map(it =>
+        '<tr class="'+(it.qty<=it.reorder?'low-row':'')+'">'
+        + '<td>'+esc(it.name)+(it.ranyo?' <span class="ranyo-flag">濫用防止</span>':'')+'</td>'
+        + '<td style="color:'+(CAT_COLOR[it.category]||"#5C6B78")+';font-weight:600">'+(CAT_SHORT[it.category]||it.category)+'</td>'
+        + '<td>'+yen(it.price)+'</td><td>'+it.qty+'</td><td>'+it.reorder+'</td>'
+        + '<td>'+(it.expiry||"")+'</td><td>'+esc(it.maker||"")+'</td>'
+        + '<td style="font-family:monospace">'+it.jan+'</td>'
+        + '<td>'+esc(it.memo||"")+'</td><td>'+(it.updatedAt||"")+'</td></tr>'
+      ).join("")
+      + '</tbody></table></div><p class="hint" style="margin-top:6px">横にスクロールすると全ての列が見られます。商品の編集はカード形式に戻して行ってください。</p>';
+    return;
+  }
   area.innerHTML = '<ul class="stock-list">' + arr.map(it =>
     '<li class="stock-item' + (it.qty<=it.reorder?' low':'') + '">'
     + '<input type="checkbox" ' + (selected.has(it.id)?'checked':'') + ' onchange="toggleSelect(\''+it.id+'\')" aria-label="値札用に選択">'
     + '<div class="stock-main" onclick="editItem(\''+it.id+'\')">'
     +   '<div class="stock-top"><span class="cat-badge" style="border-color:'+CAT_COLOR[it.category]+';color:'+CAT_COLOR[it.category]+'">'+CAT_SHORT[it.category]+'</span><span class="stock-name">'+esc(it.name)+'</span></div>'
-    +   '<div class="stock-sub">' + (it.maker?'<span>'+esc(it.maker)+'</span>':'') + '<span>'+yen(it.price)+'</span>' + (it.expiry?'<span>期限 '+it.expiry+'</span>':'') + (it.qty<=it.reorder?'<span class="low-flag">要発注</span>':'') + '</div>'
+    +   '<div class="stock-sub">' + (it.ranyo?'<span class="ranyo-flag">濫用防止</span>':'') + (it.maker?'<span>'+esc(it.maker)+'</span>':'') + '<span>'+yen(it.price)+'</span>' + (it.expiry?'<span>期限 '+it.expiry+'</span>':'') + (it.qty<=it.reorder?'<span class="low-flag">要発注</span>':'') + '</div>'
     + '</div>'
     + '<div class="qty-ctrl"><button onclick="changeQty(\''+it.id+'\',-1)" aria-label="1減らす">−</button><span class="qty">'+it.qty+'</span><button onclick="changeQty(\''+it.id+'\',1)" aria-label="1増やす">＋</button></div>'
     + '<button class="del" onclick="removeItem(\''+it.id+'\')" aria-label="削除">×</button></li>'
   ).join("") + '</ul>';
 }
+let listMode = "card";
+function toggleView(){
+  listMode = listMode === "card" ? "table" : "card";
+  document.getElementById("view-toggle").textContent = listMode === "card" ? "表形式" : "カード形式";
+  renderList();
+}
 function exportCsv(){
   if (!S.items.length){ toast("在庫がありません"); return; }
-  const head = ["JANコード","商品名","メーカー","リスク区分","販売価格","在庫数","発注点","使用期限","メモ","更新日"];
-  const rows = S.items.map(it => [it.jan,it.name,it.maker,it.category,it.price,it.qty,it.reorder,it.expiry,(it.memo||"").replace(/[\r\n,]/g," "),it.updatedAt]);
+  const head = ["JANコード","商品名","メーカー","区分","濫用防止","販売価格","在庫数","発注点","使用期限","メモ","更新日"];
+  const rows = S.items.map(it => [it.jan,it.name,it.maker,it.category,(it.ranyo?"該当":""),it.price,it.qty,it.reorder,it.expiry,(it.memo||"").replace(/[\r\n,]/g," "),it.updatedAt]);
   const csv = "\uFEFF" + [head].concat(rows).map(r => r.join(",")).join("\r\n");
   const blob = new Blob([csv], { type: "text/csv" });
   const a = document.createElement("a");
@@ -652,6 +688,7 @@ function renderTags(){
     + '<div class="tag-sheet print-target">' + arr.map(it =>
       '<div class="price-tag">'
       + '<div class="tag-cat" style="background:'+CAT_COLOR[it.category]+'">'+it.category+'</div>'
+      + (it.ranyo?'<div class="tag-ranyo">指定濫用防止医薬品</div>':'')
       + '<div class="tag-name">'+esc(it.name)+'</div>'
       + (it.maker?'<div class="tag-maker">'+esc(it.maker)+'</div>':'')
       + '<div class="tag-price"><span class="tag-yen">'+(it.price===""?"—":"¥"+Number(it.price).toLocaleString("ja-JP"))+'</span><span class="tag-tax">税込</span></div>'
@@ -678,7 +715,9 @@ function renderPop(){
     + '<div class="pop-name">'+esc(it.name)+'</div>'
     + (it.maker?'<div class="pop-maker">'+esc(it.maker)+'</div>':'')
     + '<div class="pop-price">' + (it.price!==""?'<span class="pop-yen">¥'+Number(it.price).toLocaleString("ja-JP")+'</span><span class="pop-tax">税込</span>':'') + '</div>'
-    + '<div class="pop-foot"><span class="pop-cat" style="background:'+CAT_COLOR[it.category]+'">'+it.category+'</span><span class="pop-note">'+esc(note)+'</span></div>'
+    + '<div class="pop-foot"><span class="pop-cat" style="background:'+CAT_COLOR[it.category]+'">'+it.category+'</span>'
+    + (it.ranyo?'<span class="pop-ranyo">指定濫用防止医薬品(販売数量に制限があります)</span>':'')
+    + '<span class="pop-note">'+esc(note)+'</span></div>'
     + '<div class="pop-seal">薬剤師<br>相談</div>'
     + '</div>';
 }
