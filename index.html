@@ -584,6 +584,22 @@ async function lookupJanExternal(code){
 }
 
 /* ============ スキャン ============ */
+let __audioCtx = null;
+function beep(){
+  try {
+    if (!__audioCtx) __audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (__audioCtx.state === "suspended") __audioCtx.resume();
+    const o = __audioCtx.createOscillator();
+    const g = __audioCtx.createGain();
+    o.type = "sine";
+    o.frequency.value = 880;
+    g.gain.setValueAtTime(0.0001, __audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3, __audioCtx.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, __audioCtx.currentTime + 0.18);
+    o.connect(g); g.connect(__audioCtx.destination);
+    o.start(); o.stop(__audioCtx.currentTime + 0.2);
+  } catch(e){}
+}
 async function toggleScan(){
   if (scanning) { await stopScan(); return; }
   const btn = document.getElementById("scan-toggle");
@@ -598,6 +614,7 @@ async function toggleScan(){
       text => {
         const code = text.trim();
         if (/^\d{8}$/.test(code) || /^\d{13}$/.test(code)){
+          beep();
           if (navigator.vibrate) navigator.vibrate(80);
           stopScan();
           scanMsg("読み取りました: " + code);
@@ -629,7 +646,7 @@ async function handlePhoto(ev){
       const bmp = await createImageBitmap(file);
       const codes = await det.detect(bmp);
       const hit = codes.find(c => /^\d{8}$/.test(c.rawValue) || /^\d{13}$/.test(c.rawValue));
-      if (hit){ scanMsg("読み取りました: " + hit.rawValue); applyJan(hit.rawValue); return; }
+      if (hit){ beep(); scanMsg("読み取りました: " + hit.rawValue); applyJan(hit.rawValue); return; }
     }
   } catch(e){}
   try {
@@ -638,7 +655,7 @@ async function handlePhoto(ev){
     const text = await s.scanFile(file, false);
     try { s.clear(); } catch(e){}
     const code = String(text).trim();
-    if (/^\d{8}$/.test(code) || /^\d{13}$/.test(code)){ scanMsg("読み取りました: " + code); applyJan(code); return; }
+    if (/^\d{8}$/.test(code) || /^\d{13}$/.test(code)){ beep(); scanMsg("読み取りました: " + code); applyJan(code); return; }
     scanMsg("JANコード(数字のバーコード)を撮影してください。");
   } catch(e){
     scanMsg("読み取れませんでした。バーコードに近づき、明るい場所でピントを合わせて撮り直すか、数字を直接入力してください。");
