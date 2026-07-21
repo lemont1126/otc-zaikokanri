@@ -1032,20 +1032,22 @@ function resetTagStyle(){
   save(); syncTagStyleInputs(); renderTags();
 }
 function fitTags(){
-  // 各値札で中身が枠を超えていたら、収まるまで内容を縮小
+  const t = tagStyle_();
+  // 高さを明示指定したカスタム値札のときだけ、収まらない場合に縮小する
+  if (t.size !== "custom" || !t.height) return;
   document.querySelectorAll("#print-tags .price-tag").forEach(tag => {
     const box = tag.querySelector(".tag-inner");
     if (!box) return;
     box.style.transform = "";
     box.style.transformOrigin = "top center";
-    const avail = tag.clientHeight - 2;
-    let tries = 0, sc = 1;
-    // まず縦のはみ出しをtransformで吸収
-    while (box.scrollHeight > avail && tries < 40){
-      sc -= 0.05; tries++;
-      box.style.transform = "scale(" + Math.max(0.3, sc) + ")";
-      if (sc <= 0.3) break;
-    }
+    const avail = tag.clientHeight;
+    // 高さが取得できない・異常に小さいときは何もしない(誤縮小防止)
+    if (!avail || avail < 20) return;
+    const need = box.scrollHeight;
+    if (need <= avail) return; // 収まっているので縮小しない
+    let sc = avail / need;
+    sc = Math.max(0.4, Math.min(1, sc)); // 下限0.4(縮めすぎ防止)
+    box.style.transform = "scale(" + sc + ")";
   });
 }
 function renderTags(){
@@ -1058,17 +1060,11 @@ function renderTags(){
   const t = tagStyle_();
   const sz = tagSize_(t);
   const fw = t.bold === "normal" ? 500 : 700;
-  // 値札の実効幅(px)に応じて文字を自動縮小(基準: 中サイズ相当220px=倍率1.0)
-  const baseW = 220, baseH = 260;
-  let scale = Math.min(1, Math.max(0.35, sz.w / baseW));
-  // 高さを指定している場合は高さ方向の収まりも考慮して、より小さい方を採用
-  if (t.size === "custom" && t.height){
-    const hpx = Math.round(t.height * 3.78);
-    scale = Math.min(scale, Math.max(0.3, hpx / baseH));
-  }
-  const nName = Math.round(t.nameSize * scale);
-  const nPrice = Math.round(t.priceSize * scale);
-  const nMaker = Math.max(8, Math.round(11 * scale));
+  // 指定された文字サイズをそのまま使う(勝手に縮小しない)。
+  // 枠に収まらない場合のみ、描画後の fitTags が全体を等倍縮小する。
+  const nName = t.nameSize;
+  const nPrice = t.priceSize;
+  const nMaker = 11;
   const ff = fontCssAttr(t.font);
   const nameStyle = 'font-family:'+ff+' !important;font-size:'+nName+'px !important;color:'+t.nameColor+' !important;font-weight:'+fw+' !important;line-height:1.2 !important';
   const yenStyle = 'font-family:'+ff+' !important;font-size:'+nPrice+'px !important;color:'+t.priceColor+' !important;font-weight:'+fw+' !important;line-height:1.1 !important';
@@ -1102,7 +1098,7 @@ function renderTags(){
       }
       return '<div class="price-tag"'+(tagStyle?(' style="'+tagStyle+'"'):'')+'>'+inner+'</div>';
     }).join("") + '</div>';
-  requestAnimationFrame(fitTags);
+  requestAnimationFrame(() => requestAnimationFrame(fitTags));
 }
 function fillPopSelect(){
   const sel = document.getElementById("pop-item");
