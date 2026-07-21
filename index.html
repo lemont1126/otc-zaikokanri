@@ -100,8 +100,9 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .seg button { border: none; background: #fff; color: var(--ai); padding: 8px 18px; font-size: 14px; cursor: pointer; font-family: var(--sans); }
 .seg button.on { background: var(--ai); color: #fff; }
 .tag-sheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.price-tag { border: 1.5px solid var(--ink); border-radius: 6px; text-align: center; background: #fff; break-inside: avoid; display: flex; flex-direction: column; box-sizing: border-box; }
+.price-tag { border: 1.5px solid var(--ink); border-radius: 0; text-align: center; background: #fff; break-inside: avoid; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden; }
 .price-tag .tag-spacer { flex: 1; }
+.price-tag .tag-inner { width: 100%; display: flex; flex-direction: column; }
 .tag-cat { color: #fff; font-size: 11px; letter-spacing: 0.15em; padding: 3px 0; }
 .tag-name { font-family: var(--serif); font-weight: 600; font-size: 16px; padding: 8px 10px 0; line-height: 1.35; overflow-wrap: anywhere; word-break: break-word; }
 .tag-maker { font-size: 11px; color: #5C6B78; }
@@ -1030,6 +1031,23 @@ function resetTagStyle(){
   S.tagStyle = defaultTagStyle();
   save(); syncTagStyleInputs(); renderTags();
 }
+function fitTags(){
+  // 各値札で中身が枠を超えていたら、収まるまで内容を縮小
+  document.querySelectorAll("#print-tags .price-tag").forEach(tag => {
+    const box = tag.querySelector(".tag-inner");
+    if (!box) return;
+    box.style.transform = "";
+    box.style.transformOrigin = "top center";
+    const avail = tag.clientHeight - 2;
+    let tries = 0, sc = 1;
+    // まず縦のはみ出しをtransformで吸収
+    while (box.scrollHeight > avail && tries < 40){
+      sc -= 0.05; tries++;
+      box.style.transform = "scale(" + Math.max(0.3, sc) + ")";
+      if (sc <= 0.3) break;
+    }
+  });
+}
 function renderTags(){
   const area = document.getElementById("print-tags");
   const arr = S.items.filter(it => selected.has(it.id));
@@ -1041,8 +1059,13 @@ function renderTags(){
   const sz = tagSize_(t);
   const fw = t.bold === "normal" ? 500 : 700;
   // 値札の実効幅(px)に応じて文字を自動縮小(基準: 中サイズ相当220px=倍率1.0)
-  const baseW = 220;
-  const scale = Math.min(1, Math.max(0.35, sz.w / baseW));
+  const baseW = 220, baseH = 260;
+  let scale = Math.min(1, Math.max(0.35, sz.w / baseW));
+  // 高さを指定している場合は高さ方向の収まりも考慮して、より小さい方を採用
+  if (t.size === "custom" && t.height){
+    const hpx = Math.round(t.height * 3.78);
+    scale = Math.min(scale, Math.max(0.3, hpx / baseH));
+  }
   const nName = Math.round(t.nameSize * scale);
   const nPrice = Math.round(t.priceSize * scale);
   const nMaker = Math.max(8, Math.round(11 * scale));
@@ -1058,7 +1081,7 @@ function renderTags(){
   area.innerHTML =
     '<div class="row gap" style="margin-bottom:12px"><button class="btn" onclick="window.print()">値札を印刷(' + arr.length + ' 枚)</button></div>'
     + '<div class="tag-sheet print-target size-' + t.size + '" style="'+sheetStyle+'">' + arr.map(it => {
-      let inner = '';
+      let inner = '<div class="tag-inner">';
       if (f.cat !== false) inner += '<div class="tag-cat" style="background:'+CAT_COLOR[it.category]+'">'+it.category+'</div>';
       if (it.ranyo) inner += '<div class="tag-ranyo">指定濫用防止医薬品</div>';
       inner += '<div>';
@@ -1069,6 +1092,7 @@ function renderTags(){
       if (isCustom && t.height) inner += '<div class="tag-spacer"></div>';
       if (f.jan !== false) inner += '<div style="padding-bottom:4px;max-width:100%;overflow:hidden">'+ean13Svg(it.jan, sz.bar, f.jannum !== false)+'</div>';
       else if (f.jannum !== false) inner += '<div class="barcode-num" style="padding-bottom:4px">'+esc(it.jan)+'</div>';
+      inner += '</div>';
       // カスタム時は幅・高さをmmで固定(印刷実寸を保証)
       const pad = (t.pad==null?2:t.pad);
       let tagStyle = 'padding:'+pad+'mm '+pad+'mm '+(pad+2)+'mm;';
@@ -1078,6 +1102,7 @@ function renderTags(){
       }
       return '<div class="price-tag"'+(tagStyle?(' style="'+tagStyle+'"'):'')+'>'+inner+'</div>';
     }).join("") + '</div>';
+  requestAnimationFrame(fitTags);
 }
 function fillPopSelect(){
   const sel = document.getElementById("pop-item");
