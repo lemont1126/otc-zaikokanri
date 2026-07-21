@@ -69,6 +69,10 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .stat.warn .stat-num { color: var(--shu); }
 .stat-label { font-size: 11.5px; color: #5C6B78; letter-spacing: 0.1em; }
 .search { flex: 1; min-width: 180px; }
+.field-toggles { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding: 8px 0; border-top: 1px dashed var(--line); }
+.field-toggles .ft-label { font-size: 12px; color: #5C6B78; width: 100%; }
+.field-toggles label { flex-direction: row; align-items: center; gap: 5px; font-size: 13px; color: var(--ink); }
+.field-toggles label input { width: auto; }
 .selall-row { flex-direction: row; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); }
 .selall-row input { width: auto; }
 .select-bar { font-size: 13.5px; background: #EDF2F0; border-radius: 8px; padding: 8px 12px; display: none; }
@@ -91,7 +95,8 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .seg button { border: none; background: #fff; color: var(--ai); padding: 8px 18px; font-size: 14px; cursor: pointer; font-family: var(--sans); }
 .seg button.on { background: var(--ai); color: #fff; }
 .tag-sheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.price-tag { border: 1.5px solid var(--ink); border-radius: 6px; padding: 0 0 8px; text-align: center; background: #fff; overflow: hidden; break-inside: avoid; }
+.price-tag { border: 1.5px solid var(--ink); border-radius: 6px; padding: 0 0 8px; text-align: center; background: #fff; break-inside: avoid; display: flex; flex-direction: column; }
+.price-tag .tag-spacer { flex: 1; }
 .tag-cat { color: #fff; font-size: 11px; letter-spacing: 0.15em; padding: 3px 0; }
 .tag-name { font-family: var(--serif); font-weight: 600; font-size: 16px; padding: 8px 10px 0; line-height: 1.35; }
 .tag-maker { font-size: 11px; color: #5C6B78; }
@@ -299,6 +304,15 @@ table.inv tr.low-row td { background: #FDF3EF; }
             <label>商品名の色 <input type="color" id="ts-name-color" onchange="saveTagStyle()"></label>
             <label>価格の色 <input type="color" id="ts-price-color" onchange="saveTagStyle()"></label>
           </div>
+          <div class="field-toggles">
+            <span class="ft-label">表示する項目:</span>
+            <label><input type="checkbox" id="tf-cat" onchange="saveTagStyle()"> 区分帯</label>
+            <label><input type="checkbox" id="tf-name" onchange="saveTagStyle()"> 商品名</label>
+            <label><input type="checkbox" id="tf-maker" onchange="saveTagStyle()"> メーカー</label>
+            <label><input type="checkbox" id="tf-price" onchange="saveTagStyle()"> 価格</label>
+            <label><input type="checkbox" id="tf-jan" onchange="saveTagStyle()"> バーコード</label>
+            <label><input type="checkbox" id="tf-jannum" onchange="saveTagStyle()"> JAN番号</label>
+          </div>
           <button class="link" onclick="resetTagStyle()" style="align-self:flex-start">標準のデザインに戻す</button>
         </div>
       </details>
@@ -324,6 +338,15 @@ table.inv tr.low-row td { background: #FDF3EF; }
               <label>コピー(px) <input type="number" id="pop-copy-size" min="12" max="60" inputmode="numeric" onchange="savePopFont()"></label>
             </div>
             <button class="link" onclick="resetPopFont()" style="align-self:flex-start">標準に戻す</button>
+            <div class="field-toggles">
+              <span class="ft-label">表示する項目:</span>
+              <label><input type="checkbox" id="pf-copy" onchange="savePopFont()"> キャッチコピー</label>
+              <label><input type="checkbox" id="pf-name" onchange="savePopFont()"> 商品名</label>
+              <label><input type="checkbox" id="pf-maker" onchange="savePopFont()"> メーカー</label>
+              <label><input type="checkbox" id="pf-price" onchange="savePopFont()"> 価格</label>
+              <label><input type="checkbox" id="pf-cat" onchange="savePopFont()"> 区分</label>
+              <label><input type="checkbox" id="pf-note" onchange="savePopFont()"> ひとこと</label>
+            </div>
           </div>
         </details>
         <button class="btn" onclick="window.print()">POPを印刷</button>
@@ -466,8 +489,9 @@ function isValidJan(code){
   if (code.length===13) return checkDigit(code.slice(0,12)) === parseInt(code[12],10);
   return true;
 }
-function ean13Svg(code, height){
-  if (!/^\d{13}$/.test(code)) return '<div class="barcode-num">' + esc(code) + '</div>';
+function ean13Svg(code, height, showNum){
+  if (showNum === undefined) showNum = true;
+  if (!/^\d{13}$/.test(code)) return showNum ? ('<div class="barcode-num">' + esc(code) + '</div>') : '';
   const parity = PARITY[parseInt(code[0],10)];
   let m = "101";
   for (let i=1;i<=6;i++){ const d = parseInt(code[i],10); m += (parity[i-1]==="L") ? L_CODES[d] : G_CODES[d]; }
@@ -483,7 +507,7 @@ function ean13Svg(code, height){
   }
   return '<div style="display:inline-block;text-align:center">'
     + '<svg viewBox="0 0 '+m.length+' '+height+'" width="'+(m.length*1.4)+'" height="'+height+'" shape-rendering="crispEdges">'+rects+'</svg>'
-    + '<div class="barcode-num">'+esc(code)+'</div></div>';
+    + (showNum ? '<div class="barcode-num">'+esc(code)+'</div>' : '') + '</div>';
 }
 
 /* ============ 外部データベース連携 ============ */
@@ -934,7 +958,7 @@ function fontOptions(sel){
 function fontCss(k){ return (FONTS[k]||FONTS.serif).css; }
 const TAG_SIZES = { s: { w: 170, bar: 28 }, m: { w: 220, bar: 34 }, l: { w: 290, bar: 42 } };
 function tagSize_(t){ if (t.size === "custom") { const px = Math.round((t.width || 60) * 3.78); return { w: px, bar: Math.max(20, Math.round(px * 0.16)) }; } return TAG_SIZES[t.size] || TAG_SIZES.m; }
-function defaultTagStyle(){ return { size: "m", width: 60, height: 0, font: "serif", bold: "bold", nameSize: 16, priceSize: 30, nameColor: "#1F2933", priceColor: "#B7402B" }; }
+function defaultTagStyle(){ return { size: "m", width: 60, height: 0, fields: { cat:true, name:true, maker:true, price:true, jan:true, jannum:true }, font: "serif", bold: "bold", nameSize: 16, priceSize: 30, nameColor: "#1F2933", priceColor: "#B7402B" }; }
 function tagStyle_(){ return Object.assign(defaultTagStyle(), S.tagStyle || {}); }
 function syncTagStyleInputs(){
   const t = tagStyle_();
@@ -950,6 +974,13 @@ function syncTagStyleInputs(){
   document.getElementById("ts-price-size").value = t.priceSize;
   document.getElementById("ts-name-color").value = t.nameColor;
   document.getElementById("ts-price-color").value = t.priceColor;
+  const f = t.fields || {};
+  document.getElementById("tf-cat").checked = f.cat !== false;
+  document.getElementById("tf-name").checked = f.name !== false;
+  document.getElementById("tf-maker").checked = f.maker !== false;
+  document.getElementById("tf-price").checked = f.price !== false;
+  document.getElementById("tf-jan").checked = f.jan !== false;
+  document.getElementById("tf-jannum").checked = f.jannum !== false;
 }
 function saveTagStyle(){
   const size = document.getElementById("ts-size").value;
@@ -964,7 +995,15 @@ function saveTagStyle(){
     nameSize: Math.min(60, Math.max(8, parseInt(document.getElementById("ts-name-size").value, 10) || 16)),
     priceSize: Math.min(120, Math.max(10, parseInt(document.getElementById("ts-price-size").value, 10) || 30)),
     nameColor: document.getElementById("ts-name-color").value,
-    priceColor: document.getElementById("ts-price-color").value
+    priceColor: document.getElementById("ts-price-color").value,
+    fields: {
+      cat: document.getElementById("tf-cat").checked,
+      name: document.getElementById("tf-name").checked,
+      maker: document.getElementById("tf-maker").checked,
+      price: document.getElementById("tf-price").checked,
+      jan: document.getElementById("tf-jan").checked,
+      jannum: document.getElementById("tf-jannum").checked
+    }
   };
   save(); renderTags();
 }
@@ -984,18 +1023,24 @@ function renderTags(){
   const fw = t.bold === "normal" ? 500 : 700;
   const nameStyle = 'font-family:'+fontCss(t.font)+' !important;font-size:'+t.nameSize+'px !important;color:'+t.nameColor+' !important;font-weight:'+fw+' !important';
   const yenStyle = 'font-family:'+fontCss(t.font)+' !important;font-size:'+t.priceSize+'px !important;color:'+t.priceColor+' !important;font-weight:'+fw+' !important';
+  const f = t.fields || {};
   area.innerHTML =
     '<div class="row gap" style="margin-bottom:12px"><button class="btn" onclick="window.print()">値札を印刷(' + arr.length + ' 枚)</button></div>'
-    + '<div class="tag-sheet print-target size-' + t.size + '" style="grid-template-columns:repeat(auto-fill,minmax(' + sz.w + 'px,1fr))">' + arr.map(it =>
-      '<div class="price-tag"'+(t.size==="custom" && t.height?(' style="min-height:'+Math.round(t.height*3.78)+'px"'):'')+'>'
-      + '<div class="tag-cat" style="background:'+CAT_COLOR[it.category]+'">'+it.category+'</div>'
-      + (it.ranyo?'<div class="tag-ranyo">指定濫用防止医薬品</div>':'')
-      + '<div class="tag-name" style="'+nameStyle+'">'+(it.name?esc(it.name):"(名称未設定)")+'</div>'
-      + (it.maker?'<div class="tag-maker">'+esc(it.maker)+'</div>':'')
-      + '<div class="tag-price"><span class="tag-yen" style="'+yenStyle+'">'+(it.price===""?"—":"¥"+Number(it.price).toLocaleString("ja-JP"))+'</span><span class="tag-tax">税込</span></div>'
-      + ean13Svg(it.jan, sz.bar)
-      + '</div>'
-    ).join("") + '</div>';
+    + '<div class="tag-sheet print-target size-' + t.size + '" style="grid-template-columns:repeat(auto-fill,minmax(' + sz.w + 'px,1fr))">' + arr.map(it => {
+      const hasHeight = t.size==="custom" && t.height;
+      let inner = '';
+      if (f.cat !== false) inner += '<div class="tag-cat" style="background:'+CAT_COLOR[it.category]+'">'+it.category+'</div>';
+      if (it.ranyo) inner += '<div class="tag-ranyo">指定濫用防止医薬品</div>';
+      inner += '<div style="padding:6px 8px 0">';
+      if (f.name !== false) inner += '<div class="tag-name" style="'+nameStyle+'">'+(it.name?esc(it.name):"(名称未設定)")+'</div>';
+      if (f.maker !== false && it.maker) inner += '<div class="tag-maker">'+esc(it.maker)+'</div>';
+      if (f.price !== false) inner += '<div class="tag-price"><span class="tag-yen" style="'+yenStyle+'">'+(it.price===""?"—":"¥"+Number(it.price).toLocaleString("ja-JP"))+'</span><span class="tag-tax">税込</span></div>';
+      inner += '</div>';
+      if (hasHeight) inner += '<div class="tag-spacer"></div>';
+      if (f.jan !== false) inner += '<div style="padding-bottom:4px">'+ean13Svg(it.jan, sz.bar, f.jannum !== false)+'</div>';
+      else if (f.jannum !== false) inner += '<div class="barcode-num" style="padding-bottom:4px">'+esc(it.jan)+'</div>';
+      return '<div class="price-tag"'+(hasHeight?(' style="min-height:'+Math.round(t.height*3.78)+'px"'):'')+'>'+inner+'</div>';
+    }).join("") + '</div>';
 }
 function fillPopSelect(){
   const sel = document.getElementById("pop-item");
@@ -1003,7 +1048,7 @@ function fillPopSelect(){
   sel.innerHTML = '<option value="">— 商品を選択 —</option>' + S.items.map(it => '<option value="'+it.id+'">'+esc(it.name)+'</option>').join("");
   if (cur) sel.value = cur;
 }
-function defaultPopFont(){ return { font: "serif", nameSize: 30, priceSize: 52, copySize: 20 }; }
+function defaultPopFont(){ return { font: "serif", nameSize: 30, priceSize: 52, copySize: 20, fields: { copy:true, name:true, maker:true, price:true, cat:true, note:true } }; }
 function popFont_(){ return Object.assign(defaultPopFont(), S.popFont || {}); }
 function syncPopFontInputs(){
   const f = popFont_();
@@ -1012,13 +1057,28 @@ function syncPopFontInputs(){
   document.getElementById("pop-name-size").value = f.nameSize;
   document.getElementById("pop-price-size").value = f.priceSize;
   document.getElementById("pop-copy-size").value = f.copySize;
+  const x = f.fields || {};
+  document.getElementById("pf-copy").checked = x.copy !== false;
+  document.getElementById("pf-name").checked = x.name !== false;
+  document.getElementById("pf-maker").checked = x.maker !== false;
+  document.getElementById("pf-price").checked = x.price !== false;
+  document.getElementById("pf-cat").checked = x.cat !== false;
+  document.getElementById("pf-note").checked = x.note !== false;
 }
 function savePopFont(){
   S.popFont = {
     font: document.getElementById("pop-font").value,
     nameSize: Math.min(80, Math.max(14, parseInt(document.getElementById("pop-name-size").value,10) || 30)),
     priceSize: Math.min(140, Math.max(20, parseInt(document.getElementById("pop-price-size").value,10) || 52)),
-    copySize: Math.min(60, Math.max(12, parseInt(document.getElementById("pop-copy-size").value,10) || 20))
+    copySize: Math.min(60, Math.max(12, parseInt(document.getElementById("pop-copy-size").value,10) || 20)),
+    fields: {
+      copy: document.getElementById("pf-copy").checked,
+      name: document.getElementById("pf-name").checked,
+      maker: document.getElementById("pf-maker").checked,
+      price: document.getElementById("pf-price").checked,
+      cat: document.getElementById("pf-cat").checked,
+      note: document.getElementById("pf-note").checked
+    }
   };
   save(); renderPop();
 }
@@ -1035,18 +1095,25 @@ function renderPop(){
   if (!it){ area.innerHTML = ""; return; }
   const copy = document.getElementById("pop-copy").value;
   const note = document.getElementById("pop-note").value;
-  area.innerHTML =
-    '<div class="pop-card ps-' + ps + '" style="font-family:'+fontCss(popFont_().font)+'">'
-    + (ps === "sale" ? '<div class="pop-sale-badge">特売</div>' : '')
-    + '<div class="pop-copy" style="font-family:'+fontCss(popFont_().font)+';font-size:'+popFont_().copySize+'px">'+esc(copy)+'</div>'
-    + '<div class="pop-name" style="font-family:'+fontCss(popFont_().font)+';font-size:'+popFont_().nameSize+'px">'+esc(it.name)+'</div>'
-    + (it.maker?'<div class="pop-maker">'+esc(it.maker)+'</div>':'')
-    + '<div class="pop-price">' + (it.price!==""?'<span class="pop-yen" style="font-family:'+fontCss(popFont_().font)+';font-size:'+popFont_().priceSize+'px">¥'+Number(it.price).toLocaleString("ja-JP")+'</span><span class="pop-tax">税込</span>':'') + '</div>'
-    + '<div class="pop-foot"><span class="pop-cat" style="background:'+CAT_COLOR[it.category]+'">'+it.category+'</span>'
-    + (it.ranyo?'<span class="pop-ranyo">指定濫用防止医薬品(販売数量に制限があります)</span>':'')
-    + '<span class="pop-note">'+esc(note)+'</span></div>'
-    + '<div class="pop-seal">薬剤師<br>相談</div>'
-    + '</div>';
+  const pf = popFont_();
+  const ff = fontCss(pf.font);
+  const x = pf.fields || {};
+  let h = '<div class="pop-card ps-' + ps + '" style="font-family:'+ff+'">';
+  if (ps === "sale") h += '<div class="pop-sale-badge">特売</div>';
+  if (x.copy !== false) h += '<div class="pop-copy" style="font-family:'+ff+';font-size:'+pf.copySize+'px">'+esc(copy)+'</div>';
+  if (x.name !== false) h += '<div class="pop-name" style="font-family:'+ff+';font-size:'+pf.nameSize+'px">'+esc(it.name)+'</div>';
+  if (x.maker !== false && it.maker) h += '<div class="pop-maker">'+esc(it.maker)+'</div>';
+  if (x.price !== false) h += '<div class="pop-price">' + (it.price!==""?'<span class="pop-yen" style="font-family:'+ff+';font-size:'+pf.priceSize+'px">¥'+Number(it.price).toLocaleString("ja-JP")+'</span><span class="pop-tax">税込</span>':'') + '</div>';
+  const showCat = x.cat !== false, showNote = x.note !== false;
+  if (showCat || showNote || it.ranyo) {
+    h += '<div class="pop-foot">';
+    if (showCat) h += '<span class="pop-cat" style="background:'+CAT_COLOR[it.category]+'">'+it.category+'</span>';
+    if (it.ranyo) h += '<span class="pop-ranyo">指定濫用防止医薬品(販売数量に制限があります)</span>';
+    if (showNote) h += '<span class="pop-note">'+esc(note)+'</span>';
+    h += '</div>';
+  }
+  h += '<div class="pop-seal">薬剤師<br>相談</div></div>';
+  area.innerHTML = h;
 }
 
 /* ============ 会員間共有(Google Apps Script サーバー) ============ */
