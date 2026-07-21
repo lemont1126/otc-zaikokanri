@@ -52,7 +52,10 @@ body { min-height: 100vh; background: var(--hakuji); color: var(--ink); font-fam
 .scan-ico { font-size: 18px; letter-spacing: -2px; opacity: 0.9; }
 .scan-box #jan-reader { width: 100%; }
 .scan-box #jan-reader:empty { display: none; }
-#jan-reader { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+#jan-reader { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+#jan-reader:not(:empty) { min-height: 260px; }
+#jan-reader video { width: 100% !important; height: auto !important; display: block; border-radius: 10px; }
+#jan-reader canvas { max-width: 100%; }
 .scan-msg { font-size: 13px; color: var(--ai-deep); background: #EDF2F0; border-left: 3px solid var(--take); padding: 8px 10px; border-radius: 0 6px 6px 0; display: none; }
 .divider { display: flex; align-items: center; gap: 10px; color: #5C6B78; font-size: 12.5px; letter-spacing: 0.14em; }
 .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
@@ -591,7 +594,7 @@ async function toggleScan(){
     scanMsg("カメラを起動しています…");
     await scanner.start(
       { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 260, height: 130 } },
+      { fps: 10, qrbox: (vw, vh) => { const w = Math.min(280, Math.floor(vw * 0.8)); return { width: w, height: Math.floor(w * 0.55) }; }, aspectRatio: 1.3333 },
       text => {
         const code = text.trim();
         if (/^\d{8}$/.test(code) || /^\d{13}$/.test(code)){
