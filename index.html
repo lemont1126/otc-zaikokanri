@@ -61,7 +61,8 @@ body { min-height: 100vh; background: var(--hakuji); color: var(--ink); font-fam
 .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .form { display: flex; flex-direction: column; gap: 12px; }
 label { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: #4A5761; letter-spacing: 0.04em; }
-input, select { font-family: var(--sans); font-size: 15px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px; background: #FBFCFC; color: var(--ink); width: 100%; }
+input, select { font-family: var(--sans); font-size: 15px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 7px; background: #FBFCFC; color: var(--ink); width: 100%; min-width: 0; box-sizing: border-box; -webkit-appearance: none; appearance: none; }
+input[type="month"], input[type="date"] { -webkit-appearance: none; appearance: none; min-height: 40px; }
 input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; background: #fff; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
@@ -226,9 +227,10 @@ table.inv tr.low-row td { background: #FDF3EF; }
     <div class="info-modal-title">患者説明用の資料</div>
     <div class="info-modal-drug" id="info-modal-name"></div>
     <p class="hint">市販薬の情報を、下のいずれかで開けます(別タブで表示)。</p>
-    <a class="btn info-modal-btn" id="info-link-pmda" target="_blank" rel="noopener">PMDA 添付文書検索(公的・確実)</a>
-    <a class="btn ghost info-modal-btn" id="info-link-web" target="_blank" rel="noopener">添付文書・使用上の注意をWeb検索</a>
-    <a class="btn ghost info-modal-btn" id="info-link-use" target="_blank" rel="noopener">効能・用法・用量をWeb検索</a>
+    <a class="btn info-modal-btn" id="info-link-pmda" target="_blank" rel="noopener" onclick="closeInfoModal()">PMDAの添付文書を探す</a>
+    <button class="btn ghost info-modal-btn" onclick="openPmdaForm();closeInfoModal()">PMDA検索ページを開く(商品名コピー)</button>
+    <a class="btn ghost info-modal-btn" id="info-link-web" target="_blank" rel="noopener" onclick="closeInfoModal()">添付文書・使用上の注意をWeb検索</a>
+    <a class="btn ghost info-modal-btn" id="info-link-use" target="_blank" rel="noopener" onclick="closeInfoModal()">効能・用法・用量をWeb検索</a>
     <button class="link" onclick="closeInfoModal()" style="margin-top:4px">閉じる</button>
   </div>
 </div>
@@ -283,10 +285,8 @@ table.inv tr.low-row td { background: #FDF3EF; }
         <label id="f-qty-label">入庫数 <input inputmode="numeric" id="f-qty" value="1"></label>
         <label>発注点 <input inputmode="numeric" id="f-reorder" value="2"></label>
       </div>
-      <div class="grid2">
-        <label>使用期限(年月) <input type="month" id="f-expiry"></label>
-        <label>メモ <input id="f-memo" placeholder="陳列場所・仕入先など"></label>
-      </div>
+      <label>使用期限(年月) <input type="month" id="f-expiry"></label>
+      <label>メモ <input id="f-memo" placeholder="陳列場所・仕入先など"></label>
       <label class="chk-row"><input type="checkbox" id="f-ranyo"> 指定濫用防止医薬品に該当(値札・一覧に表示されます)</label>
       <div class="row gap">
         <button class="btn" id="save-btn" onclick="saveItem()">在庫に登録</button>
@@ -787,16 +787,23 @@ function saveItem(){
   }
   save(); clearForm(); renderList(); showExpiryAlert();
 }
+let __infoKw = "";
 function openDrugInfo(id){
   const it = S.items.find(x => x.id===id);
   if (!it || !it.name) return;
   document.getElementById("info-modal-name").textContent = it.name;
   const kw = it.name.replace(/\d+\s*(錠|包|mL|ml|g|カプセル|枚|本|袋).*/,"").trim() || it.name;
+  __infoKw = kw;
   const enc = encodeURIComponent(kw);
-  document.getElementById("info-link-pmda").href = "https://www.pmda.go.jp/PmdaSearch/otcSearch/";
+  document.getElementById("info-link-pmda").href = "https://www.google.com/search?q=" + encodeURIComponent(kw + " 添付文書 site:pmda.go.jp");
   document.getElementById("info-link-web").href = "https://www.google.com/search?q=" + enc + "+" + encodeURIComponent("添付文書 使用上の注意");
   document.getElementById("info-link-use").href = "https://www.google.com/search?q=" + enc + "+" + encodeURIComponent("効能 用法 用量");
   document.getElementById("info-modal").style.display = "flex";
+}
+function openPmdaForm(){
+  try { navigator.clipboard && navigator.clipboard.writeText(__infoKw); } catch(e){}
+  window.open("https://www.pmda.go.jp/PmdaSearch/otcSearch/", "_blank", "noopener");
+  toast("商品名をコピーしました。検索欄に貼り付けてください");
 }
 function closeInfoModal(){ document.getElementById("info-modal").style.display = "none"; }
 function editItem(id){
