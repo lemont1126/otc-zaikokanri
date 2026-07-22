@@ -184,6 +184,15 @@ table.inv tr.low-row td { background: #FDF3EF; }
 .ps-sale .pop-yen { color: #C0392B; font-size: 60px; }
 .ps-sale .pop-seal { display: none; }
 .pop-sale-badge { position: absolute; left: 12px; top: 12px; width: 62px; height: 62px; background: #C0392B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; transform: rotate(-8deg); }
+.flash { align-items: center; gap: 12px; border-radius: 12px; padding: 14px 16px; margin: 4px 0 12px; color: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.18); animation: flashIn 0.35s ease; }
+@keyframes flashIn { from { transform: translateY(-8px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
+.flash-new { background: #2E7D46; }
+.flash-add { background: #1E3A55; }
+.flash-upd { background: #A8622C; }
+.flash-ico { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.22); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.flash-txt { min-width: 0; }
+.flash-title { font-size: 16px; font-weight: 700; letter-spacing: 0.03em; }
+.flash-name { font-size: 13px; opacity: 0.92; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: var(--ai-deep); color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 13.5px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); z-index: 50; display: none; }
 #login-gate { position: fixed; inset: 0; background: var(--hakuji); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
 .login-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 26px 22px; width: min(100%, 380px); display: flex; flex-direction: column; gap: 12px; box-shadow: 0 6px 24px rgba(20,40,60,0.08); }
@@ -256,6 +265,7 @@ table.inv tr.low-row td { background: #FDF3EF; }
 
   <!-- ============ スキャン登録 ============ -->
   <section class="panel active" id="tab-scan">
+    <div id="flash" class="flash" style="display:none"></div>
     <div class="scan-box">
       <div class="scan-btns">
         <button class="btn scan-main" id="scan-toggle" onclick="toggleScan()"><span class="scan-ico">▚</span> カメラでスキャン</button>
@@ -504,6 +514,21 @@ function load(){
 }
 function save(){ try { localStorage.setItem("otc-ledger-v1", JSON.stringify(S)); } catch(e){} }
 
+function flash(kind, title, name){
+  const el = document.getElementById("flash");
+  if (!el) return;
+  const icon = kind === "new" ? "✓" : kind === "upd" ? "✎" : "＋";
+  const cls = kind === "add" ? "flash-add" : (kind === "upd" ? "flash-upd" : "flash-new");
+  el.className = "flash " + cls;
+  el.innerHTML = '<div class="flash-ico">'+icon+'</div><div class="flash-txt"><div class="flash-title">'+esc(title)+'</div>'+(name?'<div class="flash-name">'+esc(name)+'</div>':'')+'</div>';
+  el.style.display = "flex";
+  // アニメーションを毎回発火させる
+  el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";
+  clearTimeout(el._tm);
+  el._tm = setTimeout(() => { el.style.display = "none"; }, 3500);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (navigator.vibrate) navigator.vibrate(40);
+}
 function toast(msg){
   const t = document.getElementById("toast");
   t.textContent = msg; t.style.display = "block";
@@ -772,17 +797,17 @@ function saveItem(){
   S.master[f.jan] = { name: f.name, maker: f.maker, category: f.category, price: f.price };
   if (editingId){
     S.items = S.items.map(it => it.id===editingId ? Object.assign({}, it, f, { updatedAt: today() }) : it);
-    toast("更新しました");
+    flash("upd", "上書き保存しました", f.name);
   } else {
     const ex = S.items.find(it => it.jan === f.jan);
     if (ex){
       ex.name = f.name; ex.maker = f.maker; ex.category = f.category; ex.price = f.price;
       ex.reorder = f.reorder; if (f.expiry) ex.expiry = f.expiry; if (f.memo) ex.memo = f.memo;
       ex.qty += f.qty; ex.updatedAt = today();
-      toast("「" + f.name + "」に " + f.qty + " 個 加算しました");
+      flash("add", "在庫を追加しました(+" + f.qty + "個 → 合計" + ex.qty + "個)", f.name);
     } else {
       S.items.unshift(Object.assign({ id: rid(), updatedAt: today() }, f));
-      toast("登録しました");
+      flash("new", "新規登録しました", f.name);
     }
   }
   save(); clearForm(); renderList(); showExpiryAlert();
