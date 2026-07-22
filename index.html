@@ -227,10 +227,10 @@ table.inv tr.low-row td { background: #FDF3EF; }
     <div class="info-modal-title">患者説明用の資料</div>
     <div class="info-modal-drug" id="info-modal-name"></div>
     <p class="hint">市販薬の情報を、下のいずれかで開けます(別タブで表示)。</p>
-    <a class="btn info-modal-btn" id="info-link-pmda" target="_blank" rel="noopener" onclick="closeInfoModal()">PMDAの添付文書を探す</a>
-    <button class="btn ghost info-modal-btn" onclick="openPmdaForm();closeInfoModal()">PMDA検索ページを開く(商品名コピー)</button>
-    <a class="btn ghost info-modal-btn" id="info-link-web" target="_blank" rel="noopener" onclick="closeInfoModal()">添付文書・使用上の注意をWeb検索</a>
-    <a class="btn ghost info-modal-btn" id="info-link-use" target="_blank" rel="noopener" onclick="closeInfoModal()">効能・用法・用量をWeb検索</a>
+    <a class="btn info-modal-btn" id="info-link-pmda" style="display:none"></a>
+    <a class="btn info-modal-btn" id="info-link-web" style="display:none"></a>
+    <a class="btn info-modal-btn" id="info-link-use" style="display:none"></a>
+    <button class="btn info-modal-btn" onclick="openPmdaForm();closeInfoModal()">PMDA検索ページを開く(商品名コピー)</button>
     <button class="link" onclick="closeInfoModal()" style="margin-top:4px">閉じる</button>
   </div>
 </div>
