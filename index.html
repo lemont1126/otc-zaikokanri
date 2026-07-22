@@ -151,6 +151,11 @@ table.inv { border-collapse: collapse; font-size: 12px; min-width: 760px; width:
 table.inv th { background: var(--ai); color: #fff; padding: 6px 8px; text-align: left; white-space: nowrap; }
 table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space: nowrap; background: #fff; }
 table.inv tr.low-row td { background: #FDF3EF; }
+.expiry-alert { border: 1px solid #E8C4B8; border-radius: 10px; background: #FDF3EF; padding: 10px 12px; margin: 8px 0 4px; font-size: 13px; color: #6B3A2C; display: flex; flex-direction: column; gap: 6px; }
+.ea-row { line-height: 1.5; }
+.ea-expired strong { color: #C0392B; }
+.ea-soon strong { color: #B8860B; }
+.ea-actions { display: flex; gap: 12px; padding-top: 2px; }
 .cat-chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .cat-chip { border: 1px solid var(--ai); color: var(--ai); background: #fff; border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer; font-family: var(--sans); }
 .cat-chip.on { background: var(--ai); color: #fff; }
@@ -232,6 +237,8 @@ table.inv tr.low-row td { background: #FDF3EF; }
     <button class="tab" data-tab="print" onclick="showTab('print')">値札・POP</button>
     <button class="tab" data-tab="share" onclick="showTab('share')">その他</button>
   </nav>
+
+  <div id="expiry-alert" class="expiry-alert" style="display:none"></div>
 
   <!-- ============ スキャン登録 ============ -->
   <section class="panel active" id="tab-scan">
@@ -452,6 +459,7 @@ async function checkLogin(){
     if (id === LOGIN_ID && h === LOGIN_PASS_HASH){
       localStorage.setItem("otc-auth-v1", "ok");
       document.getElementById("login-gate").style.display = "none";
+      showExpiryAlert();
     } else {
       err.textContent = "会員IDまたはパスワードが違います。";
     }
@@ -765,7 +773,7 @@ function saveItem(){
       toast("登録しました");
     }
   }
-  save(); clearForm(); renderList();
+  save(); clearForm(); renderList(); showExpiryAlert();
 }
 function editItem(id){
   const it = S.items.find(x => x.id===id);
@@ -809,6 +817,34 @@ function expiryLevel(e){
   const m6 = new Date(); m6.setMonth(m6.getMonth() + 6);
   if (d <= m6) return "m6";
   return null;
+}
+function showExpiryAlert(){
+  const box = document.getElementById("expiry-alert");
+  if (!box) return;
+  const expired = [], soon = [];
+  S.items.forEach(it => {
+    const lv = expiryLevel(it.expiry);
+    if (lv === "expired") expired.push(it);
+    else if (lv === "m3") soon.push(it);
+  });
+  if (!expired.length && !soon.length){ box.style.display = "none"; return; }
+  let h = '';
+  if (expired.length){
+    h += '<div class="ea-row ea-expired"><strong>期限切れ '+expired.length+'件</strong>: '
+      + expired.slice(0,6).map(it => esc(it.name)+(it.expiry?'('+it.expiry+')':'')).join(' / ')
+      + (expired.length>6?' ほか':'') + '</div>';
+  }
+  if (soon.length){
+    h += '<div class="ea-row ea-soon"><strong>期限間近(3ヶ月以内) '+soon.length+'件</strong>: '
+      + soon.slice(0,6).map(it => esc(it.name)+(it.expiry?'('+it.expiry+')':'')).join(' / ')
+      + (soon.length>6?' ほか':'') + '</div>';
+  }
+  h += '<div class="ea-actions"><button class="link" onclick="showTab(\'list\');document.getElementById(\'sort-by\').value=\'expiry\';renderList()">期限順で一覧を見る</button> <button class="link" onclick="dismissExpiryAlert()">閉じる</button></div>';
+  box.innerHTML = h;
+  box.style.display = "block";
+}
+function dismissExpiryAlert(){
+  document.getElementById("expiry-alert").style.display = "none";
 }
 function expiryChip(e){
   if (!e) return "";
@@ -1336,6 +1372,7 @@ document.getElementById("k-jancode").value = S.apiKeys.jancode || "";
 updateBrand();
 if (localStorage.getItem("otc-auth-v1") === "ok") document.getElementById("login-gate").style.display = "none";
 renderList();
+showExpiryAlert();
 </script>
 </body>
 </html>
