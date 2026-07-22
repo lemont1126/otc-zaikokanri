@@ -98,6 +98,7 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .qty { min-width: 26px; text-align: center; font-family: var(--serif); font-size: 18px; font-variant-numeric: tabular-nums; }
 .del { border: none; background: none; color: #9AA7AF; font-size: 18px; cursor: pointer; padding: 4px; }
 .edit { border: none; background: none; color: var(--ai); font-size: 16px; cursor: pointer; padding: 4px; }
+.info-btn { border: none; background: none; font-size: 16px; cursor: pointer; padding: 4px; }
 .empty { text-align: center; padding: 30px 10px; color: #5C6B78; display: flex; flex-direction: column; gap: 14px; align-items: center; }
 .seg { display: flex; border: 1px solid var(--ai); border-radius: 8px; overflow: hidden; width: fit-content; }
 .seg button { border: none; background: #fff; color: var(--ai); padding: 8px 18px; font-size: 14px; cursor: pointer; font-family: var(--sans); }
@@ -220,6 +221,17 @@ table.inv tr.low-row td { background: #FDF3EF; }
     <p class="hint" id="login-err" style="color:var(--shu);text-align:center"></p>
   </div>
 </div>
+<div id="info-modal" class="info-modal" style="display:none" onclick="if(event.target===this)closeInfoModal()">
+  <div class="info-modal-card">
+    <div class="info-modal-title">患者説明用の資料</div>
+    <div class="info-modal-drug" id="info-modal-name"></div>
+    <p class="hint">市販薬の情報を、下のいずれかで開けます(別タブで表示)。</p>
+    <a class="btn info-modal-btn" id="info-link-pmda" target="_blank" rel="noopener">PMDA 添付文書検索(公的・確実)</a>
+    <a class="btn ghost info-modal-btn" id="info-link-web" target="_blank" rel="noopener">添付文書・使用上の注意をWeb検索</a>
+    <a class="btn ghost info-modal-btn" id="info-link-use" target="_blank" rel="noopener">効能・用法・用量をWeb検索</a>
+    <button class="link" onclick="closeInfoModal()" style="margin-top:4px">閉じる</button>
+  </div>
+</div>
 <div class="chrome">
   <header class="header">
     <div class="brand">
@@ -272,7 +284,7 @@ table.inv tr.low-row td { background: #FDF3EF; }
         <label>発注点 <input inputmode="numeric" id="f-reorder" value="2"></label>
       </div>
       <div class="grid2">
-        <label>使用期限 <input type="date" id="f-expiry"></label>
+        <label>使用期限(年月) <input type="month" id="f-expiry"></label>
         <label>メモ <input id="f-memo" placeholder="陳列場所・仕入先など"></label>
       </div>
       <label class="chk-row"><input type="checkbox" id="f-ranyo"> 指定濫用防止医薬品に該当(値札・一覧に表示されます)</label>
@@ -775,6 +787,18 @@ function saveItem(){
   }
   save(); clearForm(); renderList(); showExpiryAlert();
 }
+function openDrugInfo(id){
+  const it = S.items.find(x => x.id===id);
+  if (!it || !it.name) return;
+  document.getElementById("info-modal-name").textContent = it.name;
+  const kw = it.name.replace(/\d+\s*(錠|包|mL|ml|g|カプセル|枚|本|袋).*/,"").trim() || it.name;
+  const enc = encodeURIComponent(kw);
+  document.getElementById("info-link-pmda").href = "https://www.pmda.go.jp/PmdaSearch/otcSearch/";
+  document.getElementById("info-link-web").href = "https://www.google.com/search?q=" + enc + "+" + encodeURIComponent("添付文書 使用上の注意");
+  document.getElementById("info-link-use").href = "https://www.google.com/search?q=" + enc + "+" + encodeURIComponent("効能 用法 用量");
+  document.getElementById("info-modal").style.display = "flex";
+}
+function closeInfoModal(){ document.getElementById("info-modal").style.display = "none"; }
 function editItem(id){
   const it = S.items.find(x => x.id===id);
   if (!it) return;
@@ -808,7 +832,14 @@ function removeSelected(){
 }
 function expiryLevel(e){
   if (!e) return null;
-  const d = new Date(e + "T23:59:59");
+  // YYYY-MM(月単位)ならその月の末日を期限とみなす。YYYY-MM-DDにも対応。
+  let d;
+  if (/^\d{4}-\d{2}$/.test(e)){
+    const y = +e.slice(0,4), m = +e.slice(5,7);
+    d = new Date(y, m, 0, 23, 59, 59); // m月の0日=前月末→実質m月末
+  } else {
+    d = new Date(e + "T23:59:59");
+  }
   if (isNaN(d)) return null;
   const now = new Date();
   if (d < now) return "expired";
@@ -831,12 +862,12 @@ function showExpiryAlert(){
   let h = '';
   if (expired.length){
     h += '<div class="ea-row ea-expired"><strong>期限切れ '+expired.length+'件</strong>: '
-      + expired.slice(0,6).map(it => esc(it.name)+(it.expiry?'('+it.expiry+')':'')).join(' / ')
+      + expired.slice(0,6).map(it => esc(it.name)+(it.expiry?'('+fmtExpiry(it.expiry)+')':'')).join(' / ')
       + (expired.length>6?' ほか':'') + '</div>';
   }
   if (soon.length){
     h += '<div class="ea-row ea-soon"><strong>期限間近(3ヶ月以内) '+soon.length+'件</strong>: '
-      + soon.slice(0,6).map(it => esc(it.name)+(it.expiry?'('+it.expiry+')':'')).join(' / ')
+      + soon.slice(0,6).map(it => esc(it.name)+(it.expiry?'('+fmtExpiry(it.expiry)+')':'')).join(' / ')
       + (soon.length>6?' ほか':'') + '</div>';
   }
   h += '<div class="ea-actions"><button class="link" onclick="showTab(\'list\');document.getElementById(\'sort-by\').value=\'expiry\';renderList()">期限順で一覧を見る</button> <button class="link" onclick="dismissExpiryAlert()">閉じる</button></div>';
@@ -846,13 +877,17 @@ function showExpiryAlert(){
 function dismissExpiryAlert(){
   document.getElementById("expiry-alert").style.display = "none";
 }
+function fmtExpiry(e){
+  if (/^\d{4}-\d{2}$/.test(e)) return e.slice(0,4)+'年'+(+e.slice(5,7))+'月';
+  return e;
+}
 function expiryChip(e){
   if (!e) return "";
-  const lv = expiryLevel(e);
-  if (lv === "expired") return '<span class="exp exp-r">期限切れ ' + e + '</span>';
-  if (lv === "m3") return '<span class="exp exp-o">期限 ' + e + '(3ヶ月以内)</span>';
-  if (lv === "m6") return '<span class="exp exp-y">期限 ' + e + '(6ヶ月以内)</span>';
-  return '<span>期限 ' + e + '</span>';
+  const lv = expiryLevel(e), t = fmtExpiry(e);
+  if (lv === "expired") return '<span class="exp exp-r">期限切れ ' + t + '</span>';
+  if (lv === "m3") return '<span class="exp exp-o">期限 ' + t + '(3ヶ月以内)</span>';
+  if (lv === "m6") return '<span class="exp exp-y">期限 ' + t + '(6ヶ月以内)</span>';
+  return '<span>期限 ' + t + '</span>';
 }
 function expiryTdStyle(e){
   const lv = expiryLevel(e);
@@ -958,6 +993,7 @@ function renderList(){
     +   '<div class="stock-sub">' + (it.ranyo?'<span class="ranyo-flag">濫用防止</span>':'') + (it.maker?'<span>'+esc(it.maker)+'</span>':'') + '<span>'+yen(it.price)+'</span>' + expiryChip(it.expiry) + (it.qty<=it.reorder?'<span class="low-flag">要発注</span>':'') + '</div>'
     + '</div>'
     + '<div class="qty-ctrl"><button onclick="changeQty(\''+it.id+'\',-1)" aria-label="1減らす">−</button><span class="qty">'+it.qty+'</span><button onclick="changeQty(\''+it.id+'\',1)" aria-label="1増やす">＋</button></div>'
+    + '<button class="info-btn" onclick="event.stopPropagation();openDrugInfo(\''+it.id+'\')" aria-label="患者説明資料" title="患者説明資料を開く">📄</button>'
     + '<button class="edit" onclick="editItem(\''+it.id+'\')" aria-label="編集">✎</button>'
     + '<button class="del" onclick="removeItem(\''+it.id+'\')" aria-label="削除">×</button></li>'
   ).join("") + '</ul>';
