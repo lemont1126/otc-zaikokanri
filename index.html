@@ -101,12 +101,25 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .del { border: none; background: none; color: #9AA7AF; font-size: 18px; cursor: pointer; padding: 4px; }
 .edit { border: none; background: none; color: var(--ai); font-size: 16px; cursor: pointer; padding: 4px; }
 .info-btn { border: none; background: none; font-size: 16px; cursor: pointer; padding: 4px; }
+.saved-pop-list { display: flex; flex-direction: column; gap: 4px; }
+.saved-pop { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: #fff; }
+.saved-pop .link { flex: 1; text-align: left; }
+.saved-pop-meta { font-size: 11.5px; color: #7B8794; }
+.info-pop { position: absolute; z-index: 95; background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 22px rgba(0,0,0,0.22); padding: 8px; display: flex; flex-direction: column; gap: 4px; width: 250px; }
+.info-pop-name { font-size: 12.5px; font-weight: 600; color: var(--ai-deep); padding: 2px 6px 6px; border-bottom: 1px solid var(--line); overflow: hidden; text-overflow: ellipsis; }
+.info-pop-btn { display: block; width: 100%; text-align: left; background: none; border: none; padding: 9px 8px; font-size: 13.5px; color: var(--ink); cursor: pointer; border-radius: 6px; text-decoration: none; font-family: var(--sans); }
+.info-pop-btn.close { color: #7B8794; border-top: 1px solid var(--line); }
+
 .empty { text-align: center; padding: 30px 10px; color: #5C6B78; display: flex; flex-direction: column; gap: 14px; align-items: center; }
 .seg { display: flex; border: 1px solid var(--ai); border-radius: 8px; overflow: hidden; width: fit-content; }
 .seg button { border: none; background: #fff; color: var(--ai); padding: 8px 18px; font-size: 14px; cursor: pointer; font-family: var(--sans); }
 .seg button.on { background: var(--ai); color: #fff; }
 .tag-sheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .price-tag { border: 1.5px solid var(--ink); border-radius: 0; text-align: center; background: #fff; break-inside: avoid; display: flex; flex-direction: column; box-sizing: border-box; overflow: hidden; }
+.price-tag.tag-h { flex-direction: row; align-items: stretch; }
+.price-tag.tag-h-rev { flex-direction: row-reverse; }
+.price-tag.tag-h .tag-hbody { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.tag-cat-v { writing-mode: vertical-rl; text-orientation: upright; display: flex; align-items: center; justify-content: center; padding: 4px 2px; letter-spacing: 0.1em; flex-shrink: 0; }
 .price-tag .tag-inner { width: 100%; height: 100%; display: flex; flex-direction: column; }
 .price-tag .tag-top { flex: 0 0 auto; }
 .price-tag .tag-mid { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px; min-height: 0; padding: 4px 6px; }
@@ -147,6 +160,8 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .chk-row { flex-direction: row; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); }
 .chk-row input { width: auto; }
 .sub-cost { color: #8A6D3B; }
+.sub-staff { color: #6A3FA0; }
+.sub-memo { color: #5C6B78; font-style: italic; }
 .sub-sup { color: #4E7F8C; }
 .ranyo-flag { color: #8A6400; background: #FBEFC7; border: 1px solid #E3C65A; border-radius: 4px; font-size: 10.5px; padding: 1px 5px; white-space: nowrap; }
 .tag-ranyo { background: #F5D547; color: #4A3B00; font-size: 10px; letter-spacing: 0.1em; padding: 2px 0; font-weight: 600; }
@@ -162,6 +177,7 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
 .row-actions button { border: none; background: none; cursor: pointer; padding: 3px; font-size: 15px; }
 .row-actions .edit { color: var(--ai); }
 .row-actions .del { color: #9AA7AF; font-size: 17px; }
+.backup-alert { border: 1px solid #C8D6C0; border-radius: 10px; background: #F2F7EF; padding: 10px 12px; margin: 8px 0 4px; font-size: 13px; color: #35502C; display: flex; flex-direction: column; gap: 6px; }
 .expiry-alert { border: 1px solid #E8C4B8; border-radius: 10px; background: #FDF3EF; padding: 10px 12px; margin: 8px 0 4px; font-size: 13px; color: #6B3A2C; display: flex; flex-direction: column; gap: 6px; }
 .ea-row { line-height: 1.5; }
 .ea-expired strong { color: #C0392B; }
@@ -192,6 +208,30 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
 .ps-sale .pop-copy { color: #C0392B; border-color: #C0392B; }
 .ps-sale .pop-yen { color: #C0392B; font-size: 60px; }
 .ps-sale .pop-seal { display: none; }
+.pop-card.ps-wa { border: 2px solid #1E3A55; background: #FBF8F1; position: relative; }
+.ps-wa .pop-copy { color: #1E3A55; border-color: #B7402B; letter-spacing: 0.25em; }
+.ps-wa .pop-yen { color: #B7402B; }
+.ps-wa .pop-seal { display: none; }
+.pop-card.ps-soft { border: 2px solid #F3C9D4; border-radius: 26px; background: #FFF7FA; }
+.ps-soft .pop-copy { color: #C77D96; border-color: #F3C9D4; }
+.ps-soft .pop-name { color: #6B4E5B; }
+.ps-soft .pop-yen { color: #D96A8A; }
+.pop-card.ps-mini { border: 1px solid #C9CFD4; background: #fff; }
+.ps-mini .pop-copy { color: #7B8794; border-color: #C9CFD4; letter-spacing: 0.18em; font-size: 15px; }
+.ps-mini .pop-name { color: #1F2933; }
+.ps-mini .pop-yen { color: #1F2933; }
+.ps-mini .pop-seal { display: none; }
+.pop-card.ps-board { background: #2F4034; border: 8px solid #8B6B45; color: #fff; }
+.ps-board .pop-copy { color: #F5E9C8; border-color: #F5E9C8; }
+.ps-board .pop-name { color: #fff; }
+.ps-board .pop-maker { color: #D9E2D6; }
+.ps-board .pop-yen { color: #FFE94D; }
+.ps-board .pop-note { color: #E8EFE6; }
+.ps-board .pop-seal { display: none; }
+.pop-card.ps-new { border: 3px solid #2E7D46; background: #F4FBF6; }
+.ps-new .pop-copy { color: #2E7D46; border-color: #2E7D46; }
+.ps-new .pop-yen { color: #2E7D46; }
+.pop-new-badge { position: absolute; right: 12px; top: 12px; background: #2E7D46; color: #fff; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; }
 .pop-sale-badge { position: absolute; left: 12px; top: 12px; width: 62px; height: 62px; background: #C0392B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px; transform: rotate(-8deg); }
 .flash { align-items: center; gap: 12px; border-radius: 12px; padding: 14px 16px; margin: 4px 0 12px; color: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.18); animation: flashIn 0.35s ease; }
 @keyframes flashIn { from { transform: translateY(-8px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -240,17 +280,12 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
     <p class="hint" id="login-err" style="color:var(--shu);text-align:center"></p>
   </div>
 </div>
-<div id="info-modal" class="info-modal" style="display:none" onclick="if(event.target===this)closeInfoModal()">
-  <div class="info-modal-card">
-    <div class="info-modal-title">患者説明用の資料</div>
-    <div class="info-modal-drug" id="info-modal-name"></div>
-    <p class="hint">市販薬の情報を、下のいずれかで開けます(別タブで表示)。</p>
-    <a class="btn info-modal-btn" id="info-link-pmda" style="display:none"></a>
-    <a class="btn info-modal-btn" id="info-link-web" style="display:none"></a>
-    <a class="btn info-modal-btn" id="info-link-use" style="display:none"></a>
-    <button class="btn info-modal-btn" onclick="openPmdaForm();closeInfoModal()">PMDA検索ページを開く(商品名コピー)</button>
-    <button class="link" onclick="closeInfoModal()" style="margin-top:4px">閉じる</button>
-  </div>
+<div id="info-pop" class="info-pop" style="display:none">
+  <div class="info-pop-name" id="info-pop-name"></div>
+  <a class="info-pop-btn" id="ip-web" target="_blank" rel="noopener" onclick="closeInfoPop()">商品情報をWeb検索</a>
+  <a class="info-pop-btn" id="ip-use" target="_blank" rel="noopener" onclick="closeInfoPop()">効能・用法をWeb検索</a>
+  <button class="info-pop-btn" onclick="openPmdaForm();closeInfoPop()">PMDA添付文書(商品名コピー)</button>
+  <button class="info-pop-btn close" onclick="closeInfoPop()">閉じる</button>
 </div>
 <div class="chrome">
   <header class="header">
@@ -264,16 +299,17 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
   </header>
 
   <nav class="tabs" role="tablist">
-    <button class="tab active" data-tab="scan" onclick="showTab('scan')">スキャン登録</button>
-    <button class="tab" data-tab="list" onclick="showTab('list')">在庫リスト</button>
+    <button class="tab active" data-tab="list" onclick="showTab('list')">在庫リスト</button>
     <button class="tab" data-tab="print" onclick="showTab('print')">値札・POP</button>
+    <button class="tab" data-tab="scan" onclick="showTab('scan')">商品登録</button>
     <button class="tab" data-tab="share" onclick="showTab('share')">その他</button>
   </nav>
 
   <div id="expiry-alert" class="expiry-alert" style="display:none"></div>
+  <div id="backup-alert" class="backup-alert" style="display:none"></div>
 
   <!-- ============ スキャン登録 ============ -->
-  <section class="panel active" id="tab-scan">
+  <section class="panel" id="tab-scan">
     <div id="flash" class="flash" style="display:none"></div>
     <div class="scan-box">
       <div class="scan-btns">
@@ -337,7 +373,7 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
   </section>
 
   <!-- ============ 在庫リスト ============ -->
-  <section class="panel" id="tab-list">
+  <section class="panel active" id="tab-list">
     <div class="cat-chips" id="cat-chips"></div>
     <div class="row gap wrap">
       <input class="search" id="q" placeholder="商品名・JAN・メーカーで検索" oninput="renderList()">
@@ -384,6 +420,10 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
           </div>
           <div class="grid2">
             <label>値札の余白(mm) <input type="number" id="ts-pad" min="0" max="20" step="0.5" inputmode="decimal" onchange="saveTagStyle()"></label>
+            <label>区分帯の位置 <select id="ts-catpos" onchange="saveTagStyle()">
+              <option value="top">上</option><option value="bottom">下</option>
+              <option value="left">左</option><option value="right">右</option>
+            </select></label>
           </div>
           <div class="field-toggles">
             <span class="ft-label">表示する項目:</span>
@@ -403,7 +443,7 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
       <div class="form">
         <div class="grid2">
           <label>対象商品 <select id="pop-item" onchange="renderPop()"></select></label>
-          <label>デザイン <select id="pop-style" onchange="savePopStyle()"><option value="refined">デザイン①(洗練)</option><option value="fun">デザイン②(楽しい)</option><option value="oshare">デザイン③(おしゃれ)</option><option value="medatsu">デザイン④(目立つ)</option><option value="sale">デザイン⑤(特売)</option></select></label>
+          <label>デザイン <select id="pop-style" onchange="savePopStyle()"><option value="refined">デザイン①(洗練)</option><option value="fun">デザイン②(楽しい)</option><option value="oshare">デザイン③(おしゃれ)</option><option value="medatsu">デザイン④(目立つ)</option><option value="sale">デザイン⑤(特売)</option><option value="wa">デザイン⑥(和風)</option><option value="soft">デザイン⑦(やわらか)</option><option value="mini">デザイン⑧(ミニマル)</option><option value="board">デザイン⑨(黒板風)</option><option value="new">デザイン⑩(新発売)</option></select></label>
         </div>
         <div class="grid2">
           <label>キャッチコピー <input id="pop-copy" value="薬剤師おすすめ" oninput="renderPop()"></label>
@@ -430,7 +470,11 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
             </div>
           </div>
         </details>
-        <button class="btn" onclick="window.print()">POPを印刷</button>
+        <div class="row gap wrap">
+          <button class="btn" onclick="window.print()">POPを印刷</button>
+          <button class="btn ghost" onclick="savePop()">このPOPを保存</button>
+        </div>
+        <div id="saved-pops"></div>
       </div>
       <div class="pop-wrap print-target" id="pop-preview"></div>
     </div>
@@ -438,32 +482,6 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
 
   <!-- ============ 会員間共有 ============ -->
   <section class="panel" id="tab-share">
-    <div class="set-card">
-      <h3 class="set-h">薬局情報(画面上部に表示)</h3>
-      <div class="grid2">
-        <label>薬局名 <input id="ph-name" placeholder="例:とみなが薬局 ○○店" onchange="savePharmacy()"></label>
-        <label>地区 <input id="ph-area" placeholder="例:熊本市中央区" onchange="savePharmacy()"></label>
-      </div>
-    </div>
-
-    <div class="set-card">
-      <h3 class="set-h">商品名の自動取得(外部データベース)</h3>
-      <p class="hint">楽天ウェブサービス(Rakuten Developers)の <strong>Application ID</strong> と <strong>Access Key</strong> を設定すると、スキャンしたJANコードから商品名を自動取得します。</p>
-      <label>Yahoo! Client ID(推奨・メーカー名まで取得できます)
-        <input id="k-yahoo" placeholder="例:dj00aiZpPT…… の形式" onchange="saveKeys()">
-      </label>
-      <label>楽天 Application ID(アプリID)
-        <input id="k-rakuten" placeholder="例:2cb67db9-…… の形式" onchange="saveKeys()">
-      </label>
-      <label>楽天 Access Key(アクセスキー)
-        <input id="k-rakuten-key" placeholder="例:pk_…… の形式" onchange="saveKeys()">
-      </label>
-      <label>JANCODE LOOKUP アプリID(任意)
-        <input id="k-jancode" placeholder="jancodelookup.com で無料発行" onchange="saveKeys()">
-      </label>
-      <p class="hint">検索順: Yahoo!ショッピング → JANCODE LOOKUP → 楽天市場 → Open Food Facts(キー不要) → 手入力。<strong>Yahoo!はメーカー名と商品分類まで取得できる</strong>ため、設定を強くおすすめします。キーはこの端末にのみ保存されます。</p>
-    </div>
-
     <div class="set-card">
       <h3 class="set-h">データの控え(バックアップ・引き継ぎ)</h3>
       <p class="hint">在庫・商品マスタ・各種設定をファイル1つに保存できます。機種変更やアドレス変更の際は、変更前に「控えを保存」し、変更後の画面で「控えから復元」してください。</p>
@@ -489,6 +507,33 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
       <div class="divider"><span>備蓄をさがす</span></div>
       <input class="search" id="share-q" placeholder="商品名・JANで全店舗を横断検索" oninput="renderShared()">
       <div id="share-area"></div>
+    </div>
+
+    <div class="set-card">
+      <h3 class="set-h">薬局情報(画面上部に表示)</h3>
+      <div class="grid2">
+        <label>薬局名 <input id="ph-name" placeholder="例:とみなが薬局 ○○店" onchange="savePharmacy()"></label>
+        <label>地区 <input id="ph-area" placeholder="例:熊本市中央区" onchange="savePharmacy()"></label>
+      </div>
+    </div>
+
+    <div class="set-card">
+      <h3 class="set-h">商品名の自動取得(外部データベース)</h3>
+      <p class="hint">楽天ウェブサービス(Rakuten Developers)の <strong>Application ID</strong> と <strong>Access Key</strong> を設定すると、スキャンしたJANコードから商品名を自動取得します。</p>
+      <label>Yahoo! Client ID(メーカー名・分類まで取得できます)
+        <input id="k-yahoo" placeholder="例:dj00aiZpPT…… の形式" onchange="saveKeys()">
+      </label>
+      <p class="hint" style="color:#8A4B2A">※Yahoo!はブラウザから直接呼び出せない仕様のため、上の「店舗間の備蓄情報共有」で<strong>共有サーバーURL</strong>を設定している場合のみ利用できます(サーバー経由で取得します)。未設定の場合は自動的に楽天market等で検索します。</p>
+      <label>楽天 Application ID(アプリID)
+        <input id="k-rakuten" placeholder="例:2cb67db9-…… の形式" onchange="saveKeys()">
+      </label>
+      <label>楽天 Access Key(アクセスキー)
+        <input id="k-rakuten-key" placeholder="例:pk_…… の形式" onchange="saveKeys()">
+      </label>
+      <label>JANCODE LOOKUP アプリID(任意)
+        <input id="k-jancode" placeholder="jancodelookup.com で無料発行" onchange="saveKeys()">
+      </label>
+      <p class="hint">検索順: Yahoo!ショッピング → JANCODE LOOKUP → 楽天市場 → Open Food Facts(キー不要) → 手入力。<strong>Yahoo!はメーカー名と商品分類まで取得できる</strong>ため、設定を強くおすすめします。キーはこの端末にのみ保存されます。</p>
     </div>
   </section>
 
@@ -523,9 +568,9 @@ async function checkLogin(){
   }
 }
 /* ============ 定数 ============ */
-const CATEGORIES = ["要指導医薬品","第1類医薬品","指定第2類医薬品","第2類医薬品","第3類医薬品","医薬部外品","サプリメント・健康食品","食品・菓子","飲料","日用品・雑貨","その他"];
-const CAT_SHORT = {"要指導医薬品":"要指導","第1類医薬品":"第1類","指定第2類医薬品":"指定第2類","第2類医薬品":"第2類","第3類医薬品":"第3類","医薬部外品":"部外品","サプリメント・健康食品":"サプリ","食品・菓子":"食品","飲料":"飲料","日用品・雑貨":"日用品","その他":"その他"};
-const CAT_COLOR = {"要指導医薬品":"#6A3FA0","第1類医薬品":"#C0392B","指定第2類医薬品":"#D97B29","第2類医薬品":"#3E7C59","第3類医薬品":"#2E6DA4","医薬部外品":"#5C6B78","サプリメント・健康食品":"#647D8C","食品・菓子":"#8A6D3B","飲料":"#4E7F8C","日用品・雑貨":"#75808A","その他":"#8A8F94"};
+const CATEGORIES = ["要指導医薬品","第1類医薬品","指定第2類医薬品","第2類医薬品","第3類医薬品","体外診断用医薬品","医薬部外品","サプリメント・健康食品","食品・菓子","飲料","日用品・雑貨","その他"];
+const CAT_SHORT = {"要指導医薬品":"要指導","第1類医薬品":"第1類","指定第2類医薬品":"指定第2類","第2類医薬品":"第2類","第3類医薬品":"第3類","体外診断用医薬品":"体外診断","医薬部外品":"部外品","サプリメント・健康食品":"サプリ","食品・菓子":"食品","飲料":"飲料","日用品・雑貨":"日用品","その他":"その他"};
+const CAT_COLOR = {"要指導医薬品":"#6A3FA0","第1類医薬品":"#C0392B","指定第2類医薬品":"#D97B29","第2類医薬品":"#3E7C59","第3類医薬品":"#2E6DA4","体外診断用医薬品":"#7B5EA7","医薬部外品":"#5C6B78","サプリメント・健康食品":"#647D8C","食品・菓子":"#8A6D3B","飲料":"#4E7F8C","日用品・雑貨":"#75808A","その他":"#8A8F94"};
 
 /* ============ 状態 ============ */
 let S = { items: [], master: {}, pharmacy: { id: rid(), name: "", area: "" }, apiKeys: { yahoo: "", rakuten: "", rakutenKey: "", jancode: "" }, gasUrl: "", popStyle: "refined", popFont: { font: "serif", nameSize: 30, priceSize: 52, copySize: 20 }, tagStyle: { size: "m", font: "serif", bold: "bold", nameSize: 16, priceSize: 30, nameColor: "#1F2933", priceColor: "#B7402B" } };
@@ -619,6 +664,7 @@ function parseDrugCategory(name){
   if (/第[1１]類医薬品/.test(t)) return "第1類医薬品";
   if (/第[2２]類医薬品/.test(t)) return "第2類医薬品";
   if (/第[3３]類医薬品/.test(t)) return "第3類医薬品";
+  if (/体外診断用医薬品|検査薬|妊娠検査|排卵検査/.test(t)) return "体外診断用医薬品";
   if (/(指定)?医薬部外品|薬用/.test(t)) return "医薬部外品";
   // ② 商品名から推定
   if (/(ビール|発泡酒|チューハイ|ハイボール|焼酎|日本酒|ワイン|ウイスキー|ジュース|お茶|緑茶|麦茶|むぎ茶|ほうじ茶|烏龍茶|ウーロン茶|ジャスミン茶|紅茶|コーヒー|珈琲|カフェオレ|カフェラテ|ラテ|ココア|炭酸水|サイダー|コーラ|ミネラルウォーター|天然水|スポーツドリンク|経口補水|乳酸菌飲料|飲料|ドリンク|牛乳|豆乳|ミルクティー|スムージー|甘酒)/.test(t)) return "飲料";
@@ -642,6 +688,7 @@ function learnedMakers(){
   Object.keys(mst).forEach(function(k){ const m = mst[k]; if (m && m.maker) set[m.maker] = 1; });
   return Object.keys(set).filter(function(x){ return x.length >= 2; }).sort(function(a,b){ return b.length - a.length; });
 }
+const CAT_TINY = {"要指導医薬品":"要指導","第1類医薬品":"第1類","指定第2類医薬品":"指定2類","第2類医薬品":"第2類","第3類医薬品":"第3類","体外診断用医薬品":"体外診断","医薬部外品":"部外品","サプリメント・健康食品":"サプリ","食品・菓子":"食品","飲料":"飲料","日用品・雑貨":"日用品","その他":"その他"};
 function detectMaker(text){
   const t = String(text||"");
   // ① 自局で過去に登録したメーカー名を優先
@@ -728,8 +775,9 @@ async function lookupJanExternal(code){
   // Yahoo!ショッピング: JANコードで直接検索でき、ブランド名(メーカー)も取得できる
   if (k.yahoo){
     try {
-      const u = "https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch"
-        + "?appid=" + encodeURIComponent(k.yahoo) + "&jan_code=" + code + "&results=10";
+      // Yahoo!のAPIはブラウザから直接呼べない(CORS非対応)ため、共有サーバー(GAS)経由で取得する
+      if (!S.gasUrl) throw new Error("no-proxy");
+      const u = S.gasUrl + "?action=yahoo&appid=" + encodeURIComponent(k.yahoo) + "&jan=" + encodeURIComponent(code);
       const r = await fetch(u);
       if (r.ok){
         const d = await r.json();
@@ -1015,24 +1063,43 @@ function saveItem(){
   save(); clearForm(); renderList(); showExpiryAlert();
 }
 let __infoKw = "";
-function openDrugInfo(id){
-  const it = S.items.find(x => x.id===id);
+function openDrugInfo(id, ev){
+  const it = S.items.find(function(x){ return x.id===id; });
   if (!it || !it.name) return;
-  document.getElementById("info-modal-name").textContent = it.name;
   const kw = it.name.replace(/\d+\s*(錠|包|mL|ml|g|カプセル|枚|本|袋).*/,"").trim() || it.name;
   __infoKw = kw;
   const enc = encodeURIComponent(kw);
-  document.getElementById("info-link-pmda").href = "https://www.google.com/search?q=" + encodeURIComponent(kw + " 添付文書 site:pmda.go.jp");
-  document.getElementById("info-link-web").href = "https://www.google.com/search?q=" + enc + "+" + encodeURIComponent("添付文書 使用上の注意");
-  document.getElementById("info-link-use").href = "https://www.google.com/search?q=" + enc + "+" + encodeURIComponent("効能 用法 用量");
-  document.getElementById("info-modal").style.display = "flex";
+  const mk = it.maker ? encodeURIComponent(" " + it.maker) : "";
+  document.getElementById("info-pop-name").textContent = it.name;
+  document.getElementById("ip-web").href = "https://www.google.com/search?q=" + enc + mk;
+  document.getElementById("ip-use").href = "https://www.google.com/search?q=" + enc + "+" + encodeURIComponent("効能 用法 使用上の注意");
+  const pop = document.getElementById("info-pop");
+  pop.style.display = "flex";
+  const btn = ev && (ev.currentTarget || ev.target);
+  const pr = pop.getBoundingClientRect();
+  if (btn && btn.getBoundingClientRect){
+    const r = btn.getBoundingClientRect();
+    let top = window.scrollY + r.bottom + 6;
+    let left = window.scrollX + r.right - pr.width;
+    if (left < 8) left = 8;
+    const maxL = window.scrollX + document.documentElement.clientWidth - pr.width - 8;
+    if (left > maxL) left = maxL;
+    if (r.bottom + pr.height > window.innerHeight) top = window.scrollY + r.top - pr.height - 6;
+    pop.style.top = top + "px";
+    pop.style.left = left + "px";
+  }
+  setTimeout(function(){ document.addEventListener("click", __closePopOnce, { once: true }); }, 0);
+}
+function __closePopOnce(e){
+  const pop = document.getElementById("info-pop");
+  if (pop && !pop.contains(e.target)) closeInfoPop();
 }
 function openPmdaForm(){
-  try { navigator.clipboard && navigator.clipboard.writeText(__infoKw); } catch(e){}
+  try { if (navigator.clipboard) navigator.clipboard.writeText(__infoKw); } catch(e){}
   window.open("https://www.pmda.go.jp/PmdaSearch/otcSearch/", "_blank", "noopener");
   toast("商品名をコピーしました。検索欄に貼り付けてください");
 }
-function closeInfoModal(){ document.getElementById("info-modal").style.display = "none"; }
+function closeInfoPop(){ const p = document.getElementById("info-pop"); if (p) p.style.display = "none"; }
 function editItem(id){
   const it = S.items.find(x => x.id===id);
   if (!it) return;
@@ -1219,7 +1286,7 @@ function renderList(){
         + '<td style="font-family:monospace">'+it.jan+'</td>'
         + '<td>'+esc(it.memo||"")+'</td><td>'+(it.updatedAt||"")+'</td>'
         + '<td><div class="row-actions">'
-        +   '<button class="info-btn" onclick="openDrugInfo(\''+it.id+'\')" title="患者説明資料">📄</button>'
+        +   '<button class="info-btn" onclick="openDrugInfo(\''+it.id+'\',event)" title="患者説明資料">📄</button>'
         +   '<button class="del" onclick="removeItem(\''+it.id+'\')" title="削除">×</button>'
         + '</div></td></tr>'
       ).join("")
@@ -1231,10 +1298,10 @@ function renderList(){
     + '<input type="checkbox" ' + (selected.has(it.id)?'checked':'') + ' onchange="toggleSelect(\''+it.id+'\')" aria-label="値札用に選択">'
     + '<div class="stock-main" onclick="editItem(\''+it.id+'\')">'
     +   '<div class="stock-top"><span class="cat-badge" style="border-color:'+CAT_COLOR[it.category]+';color:'+CAT_COLOR[it.category]+'">'+CAT_SHORT[it.category]+'</span><span class="stock-name">'+(it.name?esc(it.name):"(名称未設定)")+'</span></div>'
-    +   '<div class="stock-sub">' + (it.ranyo?'<span class="ranyo-flag">濫用防止</span>':'') + (it.maker?'<span>'+esc(it.maker)+'</span>':'') + '<span>'+yen(it.price)+'</span>' + (it.cost?'<span class="sub-cost">納入 '+yen(it.cost)+'</span>':'') + (it.supplier?'<span class="sub-sup">'+esc(it.supplier)+'</span>':'') + expiryChip(it.expiry) + '</div>'
+    +   '<div class="stock-sub">' + (it.ranyo?'<span class="ranyo-flag">濫用防止</span>':'') + (it.maker?'<span>'+esc(it.maker)+'</span>':'') + '<span>'+yen(it.price)+'</span>' + (it.cost?'<span class="sub-cost">納入 '+yen(it.cost)+'</span>':'') + (it.supplier?'<span class="sub-sup">'+esc(it.supplier)+'</span>':'') + (it.staffPrice?'<span class="sub-staff">職員 '+yen(it.staffPrice)+'</span>':'') + expiryChip(it.expiry) + (it.memo?'<span class="sub-memo">'+esc(it.memo)+'</span>':'') + '</div>'
     + '</div>'
     + '<div class="qty-ctrl"><button onclick="changeQty(\''+it.id+'\',-1)" aria-label="1減らす">−</button><span class="qty">'+it.qty+'</span><button onclick="changeQty(\''+it.id+'\',1)" aria-label="1増やす">＋</button></div>'
-    + '<button class="info-btn" onclick="event.stopPropagation();openDrugInfo(\''+it.id+'\')" aria-label="患者説明資料" title="患者説明資料を開く">📄</button>'
+    + '<button class="info-btn" onclick="event.stopPropagation();openDrugInfo(\''+it.id+'\',event)" aria-label="患者説明資料" title="患者説明資料を開く">📄</button>'
     + '<button class="del" onclick="removeItem(\''+it.id+'\')" aria-label="削除">×</button></li>'
   ).join("") + '</ul>';
 }
@@ -1244,7 +1311,26 @@ function toggleView(){
   document.getElementById("view-toggle").textContent = listMode === "card" ? "表形式" : "カード形式";
   renderList();
 }
+function showBackupAlert(){
+  const box = document.getElementById("backup-alert");
+  if (!box) return;
+  if (!S.items || !S.items.length){ box.style.display = "none"; return; }
+  const last = S.lastBackup ? new Date(S.lastBackup) : null;
+  const days = last ? Math.floor((Date.now() - last.getTime()) / 86400000) : null;
+  if (days !== null && days < 14){ box.style.display = "none"; return; }
+  const msg = last
+    ? "前回の控えの保存から " + days + " 日経過しています。"
+    : "まだ一度も控えを保存していません。";
+  box.innerHTML = '<div><strong>データの控えをおすすめします</strong> — ' + msg
+    + ' 端末の故障や機種変更に備え、定期的に保存してください。</div>'
+    + '<div class="ea-actions"><button class="link" onclick="backupData()">今すぐ控えを保存</button>'
+    + '<button class="link" onclick="document.getElementById(\'backup-alert\').style.display=\'none\'">あとで</button></div>';
+  box.style.display = "block";
+}
 function backupData(){
+  S.lastBackup = new Date().toISOString();
+  save();
+  showBackupAlert();
   const blob = new Blob([JSON.stringify(S)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -1313,7 +1399,7 @@ function fontCss(k){ return (FONTS[k]||FONTS.serif).css; }
 function fontCssAttr(k){ return fontCss(k).replace(/"/g, "'"); }
 const TAG_SIZES = { s: { w: 170, bar: 28 }, m: { w: 220, bar: 34 }, l: { w: 290, bar: 42 } };
 function tagSize_(t){ if (t.size === "custom") { const px = Math.round((t.width || 60) * 3.78); return { w: px, bar: Math.max(20, Math.round(px * 0.16)) }; } return TAG_SIZES[t.size] || TAG_SIZES.m; }
-function defaultTagStyle(){ return { size: "m", width: 60, height: 0, pad: 2, fields: { cat:true, name:true, maker:true, price:true, jan:true, jannum:true }, font: "serif", bold: "bold", nameSize: 16, priceSize: 30, nameColor: "#1F2933", priceColor: "#B7402B" }; }
+function defaultTagStyle(){ return { size: "m", width: 60, height: 0, pad: 2, catPos: "top", fields: { cat:true, name:true, maker:true, price:true, jan:true, jannum:true }, font: "serif", bold: "bold", nameSize: 16, priceSize: 30, nameColor: "#1F2933", priceColor: "#B7402B" }; }
 function tagStyle_(){ return Object.assign(defaultTagStyle(), S.tagStyle || {}); }
 function syncTagStyleInputs(){
   const t = tagStyle_();
@@ -1330,6 +1416,7 @@ function syncTagStyleInputs(){
   document.getElementById("ts-name-color").value = t.nameColor;
   document.getElementById("ts-price-color").value = t.priceColor;
   document.getElementById("ts-pad").value = (t.pad==null?2:t.pad);
+  document.getElementById("ts-catpos").value = t.catPos || "top";
   const f = t.fields || {};
   document.getElementById("tf-cat").checked = f.cat !== false;
   document.getElementById("tf-name").checked = f.name !== false;
@@ -1353,6 +1440,7 @@ function saveTagStyle(){
     nameColor: document.getElementById("ts-name-color").value,
     priceColor: document.getElementById("ts-price-color").value,
     pad: Math.min(20, Math.max(0, parseFloat(document.getElementById("ts-pad").value) || 0)),
+    catPos: document.getElementById("ts-catpos").value,
     fields: {
       cat: document.getElementById("tf-cat").checked,
       name: document.getElementById("tf-name").checked,
@@ -1419,12 +1507,16 @@ function renderTags(){
   area.innerHTML =
     '<div class="row gap" style="margin-bottom:12px"><button class="btn" onclick="window.print()">値札を印刷(' + arr.length + ' 枚)</button></div>'
     + '<div class="tag-sheet print-target size-' + t.size + '" style="'+sheetStyle+'">' + arr.map(it => {
+      const cp = t.catPos || "top";
+      const vert = (cp === "left" || cp === "right");
+      const catLabel = vert ? (CAT_TINY[it.category] || it.category) : it.category;
+      const catBand = (f.cat !== false)
+        ? '<div class="tag-cat '+(vert?'tag-cat-v':'')+'" style="background:'+CAT_COLOR[it.category]+'">'+catLabel+'</div>' : '';
       let inner = '<div class="tag-inner">';
-      // 上段: 区分帯
       let top = '';
-      if (f.cat !== false) top += '<div class="tag-cat" style="background:'+CAT_COLOR[it.category]+'">'+it.category+'</div>';
+      if (cp === "top") top += catBand;
       if (it.ranyo) top += '<div class="tag-ranyo">指定濫用防止医薬品</div>';
-      inner += '<div class="tag-top">'+top+'</div>';
+      if (top) inner += '<div class="tag-top">'+top+'</div>';
       // 中段: 商品名・メーカー・価格(縦中央)
       inner += '<div class="tag-mid">';
       if (f.name !== false) inner += '<div class="tag-name" style="'+nameStyle+'">'+(it.name?esc(it.name):"(名称未設定)")+'</div>';
@@ -1436,6 +1528,7 @@ function renderTags(){
       if (f.jan !== false) bot += ean13Svg(it.jan, sz.bar, f.jannum !== false);
       else if (f.jannum !== false) bot += '<div class="barcode-num">'+esc(it.jan)+'</div>';
       inner += '<div class="tag-bot">'+bot+'</div>';
+      if (cp === "bottom") inner += catBand;
       inner += '</div>';
       // カスタム時は幅・高さをmmで固定(印刷実寸を保証)
       const pad = (t.pad==null?2:t.pad);
@@ -1445,6 +1538,10 @@ function renderTags(){
         if (t.height) tagStyle += 'height:'+t.height+'mm;';
       } else {
         tagStyle += 'min-height:'+(sz.w*0.62)+'px;';
+      }
+      if (vert){
+        const cls = 'price-tag tag-h' + (cp === "right" ? ' tag-h-rev' : '');
+        return '<div class="'+cls+'"'+(tagStyle?(' style="'+tagStyle+'"'):'')+'>'+catBand+'<div class="tag-hbody">'+inner+'</div></div>';
       }
       return '<div class="price-tag"'+(tagStyle?(' style="'+tagStyle+'"'):'')+'>'+inner+'</div>';
     }).join("") + '</div>';
@@ -1495,6 +1592,61 @@ function savePopFont(){
   save(); renderPop();
 }
 function resetPopFont(){ S.popFont = defaultPopFont(); save(); syncPopFontInputs(); renderPop(); }
+function savePop(){
+  const id = document.getElementById("pop-item").value;
+  if (!id){ toast("先に対象商品を選んでください"); return; }
+  const it = S.items.find(function(x){ return x.id===id; });
+  if (!it) return;
+  const name = prompt("このPOPの名前を入力してください", (it.name||"POP") + " " + (S.popStyle||""));
+  if (name === null) return;
+  S.savedPops = S.savedPops || [];
+  S.savedPops.unshift({
+    id: rid(),
+    title: (name || it.name || "POP").trim(),
+    itemId: id,
+    itemName: it.name || "",
+    style: S.popStyle || "refined",
+    font: JSON.parse(JSON.stringify(popFont_())),
+    copy: document.getElementById("pop-copy").value,
+    note: document.getElementById("pop-note").value,
+    savedAt: today()
+  });
+  save(); renderSavedPops(); toast("POPを保存しました");
+}
+function renderSavedPops(){
+  const box = document.getElementById("saved-pops");
+  if (!box) return;
+  const list = S.savedPops || [];
+  if (!list.length){ box.innerHTML = ""; return; }
+  box.innerHTML = '<div class="divider"><span>保存したPOP</span></div>'
+    + '<ul class="saved-pop-list">' + list.map(function(sp){
+      return '<li class="saved-pop"><button class="link" onclick="loadPop(\''+sp.id+'\')">'+esc(sp.title)+'</button>'
+        + '<span class="saved-pop-meta">'+esc(sp.itemName)+' / '+(sp.savedAt||"")+'</span>'
+        + '<button class="del" onclick="deletePop(\''+sp.id+'\')" aria-label="削除">×</button></li>';
+    }).join("") + '</ul>';
+}
+function loadPop(pid){
+  const sp = (S.savedPops||[]).find(function(x){ return x.id===pid; });
+  if (!sp) return;
+  const exists = S.items.some(function(x){ return x.id===sp.itemId; });
+  if (!exists){ toast("この商品は在庫から削除されています"); return; }
+  S.popStyle = sp.style;
+  S.popFont = sp.font;
+  save();
+  document.getElementById("pop-item").value = sp.itemId;
+  document.getElementById("pop-style").value = sp.style;
+  document.getElementById("pop-copy").value = sp.copy || "";
+  document.getElementById("pop-note").value = sp.note || "";
+  syncPopFontInputs();
+  renderPop();
+  toast("POPを読み込みました");
+}
+function deletePop(pid){
+  const sp = (S.savedPops||[]).find(function(x){ return x.id===pid; });
+  if (sp && !confirm("「"+(sp.title||"このPOP")+"」を削除しますか?")) return;
+  S.savedPops = (S.savedPops||[]).filter(function(x){ return x.id!==pid; });
+  save(); renderSavedPops();
+}
 function savePopStyle(){
   S.popStyle = document.getElementById("pop-style").value;
   save(); renderPop();
@@ -1512,10 +1664,11 @@ function renderPop(){
   const x = pf.fields || {};
   let h = '<div class="pop-card ps-' + ps + '" style="font-family:'+ff+'">';
   if (ps === "sale") h += '<div class="pop-sale-badge">特売</div>';
-  if (x.copy !== false) h += '<div class="pop-copy" style="font-family:'+ff+';font-size:'+pf.copySize+'px">'+esc(copy)+'</div>';
-  if (x.name !== false) h += '<div class="pop-name" style="font-family:'+ff+';font-size:'+pf.nameSize+'px">'+esc(it.name)+'</div>';
+  if (ps === "new") h += '<div class="pop-new-badge">NEW</div>';
+  if (x.copy !== false) h += '<div class="pop-copy" style="font-family:'+ff+' !important;font-size:'+pf.copySize+'px !important">'+esc(copy)+'</div>';
+  if (x.name !== false) h += '<div class="pop-name" style="font-family:'+ff+' !important;font-size:'+pf.nameSize+'px !important">'+esc(it.name)+'</div>';
   if (x.maker !== false && it.maker) h += '<div class="pop-maker">'+esc(it.maker)+'</div>';
-  if (x.price !== false) h += '<div class="pop-price">' + (it.price!==""?'<span class="pop-yen" style="font-family:'+ff+';font-size:'+pf.priceSize+'px">¥'+Number(it.price).toLocaleString("ja-JP")+'</span><span class="pop-tax">税込</span>':'') + '</div>';
+  if (x.price !== false) h += '<div class="pop-price">' + (it.price!==""?'<span class="pop-yen" style="font-family:'+ff+' !important;font-size:'+pf.priceSize+'px !important">¥'+Number(it.price).toLocaleString("ja-JP")+'</span><span class="pop-tax">税込</span>':'') + '</div>';
   const showCat = x.cat !== false, showNote = x.note !== false;
   if (showCat || showNote || it.ranyo) {
     h += '<div class="pop-foot">';
@@ -1651,6 +1804,8 @@ updateBrand();
 if (localStorage.getItem("otc-auth-v1") === "ok") document.getElementById("login-gate").style.display = "none";
 renderList();
 showExpiryAlert();
+showBackupAlert();
+renderSavedPops();
 </script>
 </body>
 </html>
