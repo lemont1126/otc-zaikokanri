@@ -31,7 +31,6 @@ body { min-height: 100vh; background: var(--hakuji); color: var(--ink); font-fam
 .brand-mark { width: 44px; height: 44px; border-radius: 8px; background: var(--ai); color: #fff; font-family: var(--serif); font-size: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .brand h1 { font-family: var(--serif); font-size: 21px; font-weight: 600; letter-spacing: 0.06em; color: var(--ai-deep); }
 .brand-sub { font-size: 12px; color: #5C6B78; letter-spacing: 0.04em; }
-.low-chip { border: 1px solid var(--shu); color: var(--shu); background: #fff; border-radius: 999px; padding: 5px 12px; font-size: 12.5px; cursor: pointer; white-space: nowrap; display: none; }
 .tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; border-bottom: 2px solid var(--ai); position: sticky; top: 0; background: var(--hakuji); z-index: 10; padding-top: 4px; }
 .tab { flex: 1; min-width: 92px; border: 1px solid var(--line); border-bottom: none; background: #EAEEEC; color: #4A5761; padding: 10px 6px 8px; border-radius: 8px 8px 0 0; font-size: 13.5px; letter-spacing: 0.05em; cursor: pointer; font-family: var(--sans); }
 .tab.active { background: var(--ai); border-color: var(--ai); color: #fff; font-weight: 600; }
@@ -88,12 +87,10 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .select-bar { font-size: 13.5px; background: #EDF2F0; border-radius: 8px; padding: 8px 12px; display: none; }
 .stock-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .stock-item { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
-.stock-item.low { border-left: 4px solid var(--shu); }
 .stock-main { flex: 1 1 220px; min-width: 0; cursor: pointer; }
 .stock-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .stock-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .stock-sub { display: flex; gap: 10px; font-size: 12px; color: #5C6B78; flex-wrap: wrap; }
-.low-flag { color: var(--shu); font-weight: 600; }
 .cat-badge { border: 1px solid; border-radius: 4px; font-size: 10.5px; padding: 1px 5px; white-space: nowrap; flex-shrink: 0; }
 .qty-ctrl { display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .qty-ctrl button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: #F7F9F8; font-size: 16px; cursor: pointer; }
@@ -153,7 +150,6 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 table.inv { border-collapse: collapse; font-size: 12px; min-width: 760px; width: 100%; }
 table.inv th { background: var(--ai); color: #fff; padding: 6px 8px; text-align: left; white-space: nowrap; }
 table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space: nowrap; background: #fff; }
-table.inv tr.low-row td { background: #FDF3EF; }
 .qty-ctrl-sm { display: inline-flex; align-items: center; gap: 4px; }
 .qty-ctrl-sm button { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); background: #F7F9F8; font-size: 13px; cursor: pointer; line-height: 1; padding: 0; }
 .qty-ctrl-sm span { min-width: 20px; text-align: center; font-variant-numeric: tabular-nums; }
@@ -298,10 +294,9 @@ table.inv tr.low-row td { background: #FDF3EF; }
         <label>メーカー <input id="f-maker" placeholder="例:第一三共ヘルスケア"></label>
         <label>リスク区分 <select id="f-category"></select></label>
       </div>
-      <div class="grid3">
+      <div class="grid2">
         <label>販売価格(税込) <input inputmode="numeric" id="f-price" placeholder="998" oninput="updatePriceHint()"></label>
         <label id="f-qty-label">入庫数 <input inputmode="numeric" id="f-qty" value="1"></label>
-        <label>発注点 <input inputmode="numeric" id="f-reorder" value="2"></label>
       </div>
       <label class="chk-row"><input type="checkbox" id="f-reduced" onchange="updatePriceHint()"> 軽減税率対象(8%)商品 ※未チェックは10%</label>
       <p class="hint" id="price-hint" style="margin-top:-4px"></p>
@@ -322,7 +317,7 @@ table.inv tr.low-row td { background: #FDF3EF; }
         <label id="f-supplier-other-wrap" style="display:none">発注先(その他) <input id="f-supplier-other" placeholder="発注先名を入力"></label>
       </div>
       <div class="grid2">
-        <label>納入価(税抜) <input inputmode="numeric" id="f-cost" placeholder="例:600"></label>
+        <label>納入価(税込) <input inputmode="numeric" id="f-cost" placeholder="例:600"></label>
         <label>職員販売価格(税込) <input inputmode="numeric" id="f-staff-price" placeholder="例:800"></label>
       </div>
       <label>使用期限(年月) <input type="month" id="f-expiry"></label>
@@ -760,7 +755,6 @@ function readForm(){
     category: document.getElementById("f-category").value,
     price: document.getElementById("f-price").value.replace(/\D/g,""),
     qty: Math.max(0, parseInt(document.getElementById("f-qty").value,10) || 0),
-    reorder: Math.max(0, parseInt(document.getElementById("f-reorder").value,10) || 0),
     expiry: document.getElementById("f-expiry").value,
     memo: document.getElementById("f-memo").value.trim(),
     ranyo: document.getElementById("f-ranyo").checked,
@@ -778,7 +772,6 @@ function fillForm(o){
   document.getElementById("f-category").value = o.category || "第2類医薬品";
   document.getElementById("f-price").value = (o.price===0||o.price) ? o.price : "";
   document.getElementById("f-qty").value = (o.qty===0||o.qty) ? o.qty : 1;
-  document.getElementById("f-reorder").value = (o.reorder===0||o.reorder) ? o.reorder : 2;
   document.getElementById("f-expiry").value = o.expiry || "";
   document.getElementById("f-memo").value = o.memo || "";
   document.getElementById("f-ranyo").checked = !!o.ranyo;
@@ -868,7 +861,7 @@ function saveItem(){
     const ex = S.items.find(it => it.jan === f.jan);
     if (ex){
       ex.name = f.name; ex.maker = f.maker; ex.category = f.category; ex.price = f.price;
-      ex.reorder = f.reorder; if (f.expiry) ex.expiry = f.expiry; if (f.memo) ex.memo = f.memo;
+      if (f.expiry) ex.expiry = f.expiry; if (f.memo) ex.memo = f.memo;
       ex.qty += f.qty; ex.updatedAt = today();
       flash("add", "在庫を追加しました(+" + f.qty + "個 → 合計" + ex.qty + "個)", f.name);
     } else {
@@ -1068,16 +1061,15 @@ function renderList(){
   }
   if (listMode === "table"){
     area.innerHTML = '<div class="table-wrap"><table class="inv"><thead><tr>'
-      + '<th>選</th><th>商品名</th><th>区分</th><th>価格</th><th>在庫</th><th>発注点</th><th>期限</th><th>メーカー</th><th>JAN</th><th>メモ</th><th>更新日</th><th>操作</th>'
+      + '<th>選</th><th>商品名</th><th>区分</th><th>価格</th><th>在庫</th><th>期限</th><th>メーカー</th><th>JAN</th><th>メモ</th><th>更新日</th><th>操作</th>'
       + '</tr></thead><tbody>'
       + arr.map(it =>
-        '<tr class="'+(it.qty<=it.reorder?'low-row':'')+'">'
+        '<tr>'
         + '<td><input type="checkbox" '+(selected.has(it.id)?'checked':'')+' onchange="toggleSelect(\''+it.id+'\')" aria-label="値札用に選択"></td>'
         + '<td class="name-cell" onclick="editItem(\''+it.id+'\')" style="cursor:pointer">'+(it.name?esc(it.name):"(名称未設定)")+(it.ranyo?' <span class="ranyo-flag">濫用防止</span>':'')+'</td>'
         + '<td style="color:'+(CAT_COLOR[it.category]||"#5C6B78")+';font-weight:600">'+(CAT_SHORT[it.category]||it.category)+'</td>'
         + '<td>'+yen(it.price)+'</td>'
         + '<td><div class="qty-ctrl-sm"><button onclick="changeQty(\''+it.id+'\',-1)">−</button><span>'+it.qty+'</span><button onclick="changeQty(\''+it.id+'\',1)">＋</button></div></td>'
-        + '<td>'+it.reorder+'</td>'
         + '<td'+expiryTdStyle(it.expiry)+'>'+(it.expiry?fmtExpiry(it.expiry):"")+'</td><td>'+esc(it.maker||"")+'</td>'
         + '<td style="font-family:monospace">'+it.jan+'</td>'
         + '<td>'+esc(it.memo||"")+'</td><td>'+(it.updatedAt||"")+'</td>'
@@ -1090,11 +1082,11 @@ function renderList(){
     return;
   }
   area.innerHTML = '<ul class="stock-list">' + arr.map(it =>
-    '<li class="stock-item' + (it.qty<=it.reorder?' low':'') + '">'
+    '<li class="stock-item">'
     + '<input type="checkbox" ' + (selected.has(it.id)?'checked':'') + ' onchange="toggleSelect(\''+it.id+'\')" aria-label="値札用に選択">'
     + '<div class="stock-main" onclick="editItem(\''+it.id+'\')">'
     +   '<div class="stock-top"><span class="cat-badge" style="border-color:'+CAT_COLOR[it.category]+';color:'+CAT_COLOR[it.category]+'">'+CAT_SHORT[it.category]+'</span><span class="stock-name">'+(it.name?esc(it.name):"(名称未設定)")+'</span></div>'
-    +   '<div class="stock-sub">' + (it.ranyo?'<span class="ranyo-flag">濫用防止</span>':'') + (it.maker?'<span>'+esc(it.maker)+'</span>':'') + '<span>'+yen(it.price)+'</span>' + expiryChip(it.expiry) + (it.qty<=it.reorder?'<span class="low-flag">要発注</span>':'') + '</div>'
+    +   '<div class="stock-sub">' + (it.ranyo?'<span class="ranyo-flag">濫用防止</span>':'') + (it.maker?'<span>'+esc(it.maker)+'</span>':'') + '<span>'+yen(it.price)+'</span>' + expiryChip(it.expiry) + '</div>'
     + '</div>'
     + '<div class="qty-ctrl"><button onclick="changeQty(\''+it.id+'\',-1)" aria-label="1減らす">−</button><span class="qty">'+it.qty+'</span><button onclick="changeQty(\''+it.id+'\',1)" aria-label="1増やす">＋</button></div>'
     + '<button class="info-btn" onclick="event.stopPropagation();openDrugInfo(\''+it.id+'\')" aria-label="患者説明資料" title="患者説明資料を開く">📄</button>'
@@ -1134,8 +1126,8 @@ function restoreData(ev){
 }
 function exportCsv(){
   if (!S.items.length){ toast("在庫がありません"); return; }
-  const head = ["JANコード","商品名","メーカー","区分","濫用防止","販売価格(税込)","税率","発注先","納入価(税抜)","職員販売価格(税込)","在庫数","発注点","使用期限","メモ","更新日"];
-  const rows = S.items.map(it => [it.jan,it.name,it.maker,it.category,(it.ranyo?"該当":""),it.price,(it.reduced?"8%":"10%"),(it.supplier||""),(it.cost||""),(it.staffPrice||""),it.qty,it.reorder,it.expiry,(it.memo||"").replace(/[\r\n,]/g," "),it.updatedAt]);
+  const head = ["JANコード","商品名","メーカー","区分","濫用防止","販売価格(税込)","税率","発注先","納入価(税込)","職員販売価格(税込)","在庫数","使用期限","メモ","更新日"];
+  const rows = S.items.map(it => [it.jan,it.name,it.maker,it.category,(it.ranyo?"該当":""),it.price,(it.reduced?"8%":"10%"),(it.supplier||""),(it.cost||""),(it.staffPrice||""),it.qty,it.expiry,(it.memo||"").replace(/[\r\n,]/g," "),it.updatedAt]);
   const csv = "\uFEFF" + [head].concat(rows).map(r => r.join(",")).join("\r\n");
   const blob = new Blob([csv], { type: "text/csv" });
   const a = document.createElement("a");
