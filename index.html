@@ -617,8 +617,51 @@ function parseDrugCategory(name){
   if (/医薬部外品/.test(name)) return "医薬部外品";
   return null;
 }
+const MAKERS = ["第一三共ヘルスケア","武田コンシューマーヘルスケア","大正製薬","小林製薬","ロート製薬","アリナミン製薬","エスエス製薬","久光製薬","池田模範堂","ゼリア新薬","大鵬薬品","皇漢堂製薬","日本臓器製薬","摩耶堂製薬","カイゲンファーマ","救心製薬","健栄製薬","佐藤製薬","興和新薬","全薬工業","中外製薬","杏林製薬","持田製薬","天藤製薬","近江兄弟社","ユースキン製薬","浅田飴","本草製薬","太田胃散","龍角散","ツムラ","クラシエ","参天製薬","大幸薬品","森下仁丹","第一三共","キユーピー","江崎グリコ","ハウス食品","ポッカサッポロ","コカ・コーラ","大塚製薬","伊藤園","ヤクルト","カルピス","サントリー","アサヒ","サッポロ","キリン","明治","森永","カルビー","味の素","日清","ライオン","花王","資生堂","興和","武田","白十字","玉川衛材","川本産業","ピップ","オオサキメディカル","湧永製薬"];
+function detectMaker(text){
+  const t = String(text||"");
+  for (let i=0;i<MAKERS.length;i++){ if (t.indexOf(MAKERS[i]) !== -1) return MAKERS[i]; }
+  return "";
+}
 function cleanItemName(name){
-  return name.replace(/【[^】]*】/g,"").replace(/[★☆◆■]/g,"").replace(/\s+/g," ").trim();
+  let s = String(name || "");
+  // 括弧内(宣伝文・管理コード)を除去
+  s = s.replace(/【[^】]*】/g," ").replace(/《[^》]*》/g," ").replace(/『[^』]*』/g," ")
+       .replace(/〔[^〕]*〕/g," ").replace(/\[[^\]]*\]/g," ").replace(/＜[^＞]*＞/g," ");
+  // ※以降の注記
+  s = s.replace(/※[^\s]*/g," ");
+  // 販促フレーズ
+  s = s.replace(/(お買い物)?マラソン[^\s]*/g," ")
+       .replace(/ポイント\s*\d+\s*倍/g," ").replace(/[PpＰ]\s*\d+\s*倍/g," ").replace(/\d+\s*倍/g," ")
+       .replace(/(送料無料|あす楽|即納|即日発送|翌日配送|最短|数量限定|期間限定|在庫処分|訳あり|まとめ買い|買い回り|エントリー|クーポン|割引|セール|SALE|OFF|お得|激安|格安|新発売|人気|話題|ランキング|正規品|諸条件あり|条件あり|楽天|ギフト|プレゼント|包装無料|熨斗|配送|沖縄|離島|北海道)/gi," ");
+  // ケース・入数表記
+  s = s.replace(/[×xX＊*]\s*\d+\s*(ケース|本|個|箱|袋|缶|パック|セット|入り?)/g," ")
+       .replace(/[\/／]\s*\d+\s*(本|個|缶|袋|包|錠|枚)/g," ")
+       .replace(/\d+\s*(ケース|本入り?|個入り?|箱入り?|袋入り?|パック|セット)(?![a-zA-Z])/g," ");
+  // 記号
+  s = s.replace(/[★☆◆■●▲▼♪！!｜|]/g," ");
+  s = s.replace(/\s+/g," ").trim();
+  // 単独で残った容器・単位語を末尾から除去
+  s = s.replace(/\s(缶|ケース|箱|本|入)$/g,"").trim();
+  // 同じ語の繰り返しを除去
+  const seen = {}; 
+  s = s.split(" ").filter(function(t){
+    const k = t.toLowerCase(); if (!k) return false;
+    if (seen[k]) return false; seen[k] = 1; return true;
+  }).join(" ");
+  return s.trim();
+}
+// 複数候補から最も宣伝の少ない(=短い)名前を選ぶ
+function pickBestName(cands){
+  const cleaned = cands.map(cleanItemName).filter(function(x){ return x && x.length >= 3; });
+  if (!cleaned.length) return "";
+  cleaned.sort(function(a,b){ return a.length - b.length; });
+  return cleaned[0];
+}
+// メーカー名が商品名の先頭等にある場合は取り除く
+function stripMaker(name, maker){
+  if (!maker) return name;
+  return name.split(" ").filter(function(t){ return t !== maker; }).join(" ").replace(/\s+/g," ").trim() || name;
 }
 async function lookupJanExternal(code){
   const k = S.apiKeys;
@@ -629,7 +672,7 @@ async function lookupJanExternal(code){
         const d = await r.json();
         const p = d.product && d.product[0];
         const raw = p && (p.itemName || p.name);
-        if (raw) return { name: cleanItemName(raw), maker: p.makerName || p.brandName || "", category: parseDrugCategory(raw), source: "JANCODE LOOKUP" };
+        if (raw){ const mk = p.makerName || p.brandName || detectMaker(raw); return { name: stripMaker(cleanItemName(raw), mk), maker: mk, category: parseDrugCategory(raw), source: "JANCODE LOOKUP" }; }
       }
     } catch(e){}
   }
@@ -638,13 +681,17 @@ async function lookupJanExternal(code){
       const u = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601"
         + "?applicationId=" + encodeURIComponent(k.rakuten)
         + "&accessKey=" + encodeURIComponent(k.rakutenKey)
-        + "&keyword=" + code + "&hits=1&format=json&formatVersion=2";
+        + "&keyword=" + code + "&hits=10&format=json&formatVersion=2";
       const r = await fetch(u);
       if (r.ok){
         const d = await r.json();
-        let item = d.Items && d.Items[0];
-        if (item && item.Item) item = item.Item;
-        if (item && item.itemName) return { name: cleanItemName(item.itemName), maker: "", category: parseDrugCategory(item.itemName), source: "楽天市場" };
+        let list = (d.Items || []).map(function(x){ return x && x.Item ? x.Item : x; }).filter(Boolean);
+        const raws = list.map(function(x){ return x.itemName || ""; }).filter(Boolean);
+        if (raws.length){
+          const maker = detectMaker(raws.join(" "));
+          const best = stripMaker(pickBestName(raws), maker);
+          if (best) return { name: best, maker: maker, category: parseDrugCategory(raws.join(" ")), source: "楽天市場" };
+        }
       }
     } catch(e){}
   }
@@ -654,7 +701,7 @@ async function lookupJanExternal(code){
       const d = await r.json();
       const p = d.product;
       const nm = p && (p.product_name_ja || p.product_name);
-      if (nm) return { name: nm, maker: (p && p.brands) || "", category: null, source: "Open Food Facts" };
+      if (nm){ const mk = (p && p.brands) || detectMaker(nm); return { name: stripMaker(cleanItemName(nm), mk), maker: mk, category: null, source: "Open Food Facts" }; }
     }
   } catch(e){}
   return null;
