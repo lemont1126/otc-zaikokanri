@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="OTC在庫台帳">
+<meta name="apple-mobile-web-app-title" content="OTCLinker Pro">
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#1E3A55">
 <link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEaklEQVR42u2bW2gcVRjHv3OZmd3sbro1abZGsqEtbJOWQkRKxILkQbCP+mAUUagPmpJWaYkPgpcG1D5Z8MEWqoKCT1oQwRdFH0LthRiqxdILha5kaxOj2bpmL7Mzey4+tAMx7Ca7mdnJ7Mx+r3PZ+f/O/3zzfXvmIGggko89I6EFInPhDKr3XOQX0euFgf0svh4NyK/C63UDDor4WtpwUMTX0ogh4IGDNPrVtOKgiV8JoT0Fgg4ABdH+bQe0AXgYAMGYI4Rk4ABQQhgAABeCSCmRa7/rFQCqQo3ElgcWTr57JCe4ED+ev5Q99cU3I5SSCmNc8e1b4MnH906ntif1119+dqRY0guRjnDUOmaYlXI6M5eZeP+UuHrz9wHfAZg9/9WqxxnnjBJCy4aphzQ13L9v1D85wBIvhBRSSlkjL1AAAEqJUg+wlgGwXAjGCCOE0BoJktbrGs8DsCOAcc7KhqnvTm270ZIA7I4eJYSGNDV84s1xTCmptBQAp6zLOGfbk71Jp16NrgCYOXEIGOfMoYKJaqoSGn/xqamWAPCROQ1/HHsVMj9fLDt53yf2PdIFAGC3bG4qgNPqNUDRGLuxmC/sf+34r1+f/eWyY8mLYAwAgBESngRwWr1m1dp0sDsWfZrNxg4ffaf07U+Xrti9d7GkFw69/WHc6h08B8ASb8WCKeD5BB16iadjY0eO5e1CiHSEo//kluJWA+UpACvFWzFvcBjdquyxA8GqGD/45MupUtmIMM6ppwDUEl8NwsGjkw1DkBIkAMDNdCbsuULos9D1us6zIBxgtxqGgDHCAADfn50Z9hSAIbw0je5ZVDQbgtMdoSMAesHQNYJB1vG9gR0IzWiHyaa+3ZPrvhgkU6XQj8fmUjmTw1pd3coocAmPxmlCWVrMvffDb/nU4M7czv7ehFvibQOQgPAmxP8ekllMEajrucdKCNsGBrKD/Q9udUO8rSmApeQAAK/Q27kdHUrUzkNY0+EFnu54Y+KtfPriuYLVOzRTvC0AEt3LyByQyBr2O9N5g8NzPWRoUlx/ODc5Hr07c442W7w9APcT3hURy0YoceRhFkwBnZ2R0J27/8LeiZOutOm23wLfie6RP01W5gDOtLsA9LA6DG6FbQAEROUvoWUSGnVkjWHM3OXmn1T2AXDAyuf8ITFf5rpdF7gt3rFC6LYMDfRoJExsrDRthHhHe4HRQmqZK1Z3gpBSLi+bN0q8493gmLkLNqsUhESVbo1WBYEAIK5SFCIYqxhtqPj7SdfZGC2koA+VZw/od3APZsktKqVFxqFLU+BWqVJIhkj00+LmqTnQwpdF5zBscDRtbZCAqHDAyn68OLUH57sISPwx64sXJY4biETAI+H64igByTggzyzLu7IugACk1Tt4SXxTckCtslkiRMCD0f5Iqg0g6AAa2WDkt8hcOIPaDmgDgMb22fnJ/v9zQJAgLNfangK1yARh9Ks6wM8QqmlbVaxfdpOsNqh4vRf6QfyaDmhVRzQycP8Bo+cBG8lN8rUAAAAASUVORK5CYII=">
 <link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAKyElEQVR42u3dfWxddR3H8c/39zvnPvR5ZZ1jbAVhRB5GUJbBWC0QMBI0QZeIshgxJBBQ8A9UAtFpTECD4kPAYCSSGE0QlOBAjDIQM9Z0myyFgPgADAMjsEHL1q1d78M5v9/PP+6926VOka0P5/e7n/c/a9MEbm9f/fZ7Tm/PEWSg/jWXOTDv27nlAZnvxyAEzEICLkTMQsItRMxCwi2EzEKCrYiZhXQyQAiZhTStFTGzkKa1EDILaVorYmYhTWtFzCwk1IqYWUioFTGzkFArYmYhoVbEzEJCrYiZhYRa8WliIaU4nVlIU1oRMwsJNVcOFv7KwenMfJ3SiphZSKi5crBwVw5OZ+b7lOaEZuEfFDLmPWiuGyyEtYMTmnHlYCzToLlusFDWDk5oxpWDMYJmbA4S7s+ME5oxgmaMoBkjaEbQjBE0YwTNGEEzRtCMoBkjaMYImh2+SOu0+W0RcQCglTJaKQMAIuKaP8YIOnuQI50AgNbqIOjUmMg5JwBgrNXGWg0Azjlp/hhreh75FMxPIuKaQS5ZtHD3W2/vXbjp/jvGS5VqRSul8rk4Z4wxlWpSLRbyBRGRqXKlHEdaR1pHpXKlPDzy/Gvrv3/PeQt7u0fH9uzra/nnlS8fnd8++dHB4WIhZ2+76ZrBfRMHxrs723ucc05EDmI31hqtlJ7+9sFJnppkcqo0+ZVb73qps6Mt2bBxaICg2Zy17tKLhi65YHVbHGm1ZuWKD02HOx108/vTP9YAHUU6bry/YePQcG9PV+GKL397JUGzWe3jF5679Se33HBuM9b6CnLU+/D0b4g/b3l6+5U33raqlZ5f3b3s9G+R2ew38sjPRnNxtP07N149OG2XlpnADABKRDX/d9+/7NjjTjmpf9sHT1v+8uannjuBE5rNSK8O/yYTj+P4gU8H/1zztN0cYrbW2fl4DI21JivfWAQdyGRWSubl+W5eaUJHTdCBrxm+PTaCJhiiJmhCCRU1QbcokMaB4vrrP/ckQTPvp13jQHHpsYvyBM2C+dF9yQXnrP757TdvJ2gWzB564ZqzVv3yh18fCeHrwZePtjjmxi69Z3x/mROamL2v8VqStRcPDqy9eHCYoInZ+4y1BgAmJqdigiZm72v8wcAP1l938sLe7lHu0MTsfWlqko62YsfYnn1eT2lOaGKuTbZIx1Gk41u/etVmgibmYBpYuWJZ/WDREXSgmNPU2Fb5fIuFfKG+VxuCDqz7zhAADqJa54IuqTEpULsOCEEH1N25v2PPkxvxxFWXly5ed/3QPb/aMBLy5+ucc8Zak6TG1N8Xgg4Is3XOxYuX4onnXnzxHzteOeFrt9xhfv27Pz0b6ucsIqKV0m1cOcLDDACqflT0mV575qX5/btV1J7/0k23VkJG3ZjUPj9+gj4M5uZ2Vwyu7ty/em3nvlLIqBsrR6lcKXOHDhQzADgAo1UbPOrGypHPxbn6+zxtFxrmVkMNAFprzR06YMythrpSTapA7VK+BB0o5lZA7eoZa73+JZIiZhA1Dr0uupjP5fO5uNx8JwGvVqZWvFjjkWJubso4DLZVl04Br7yQdhb+8NgTlf7+pWMrPnDiYh+fE2OtmZic2j/wqes6KtWkaJ3zctgpYj7CH9GBTWqtlO7ubO9ZdMyCscbtMQi6RTCHhrrxy5Sbv3v30M433lyWpiYm6BbDHOKkLpWr3ntQxEzUIiJbRp5/5qHH/L83iyJmogaApP6ab9/vfaiImagB4I+btk3V92mv730Y7Gm7ucbcnG+n9L74jR9t/e2jm4O4FVyQoOcT83+idq+8kHZlDrW1zoqI3H73fZvufejxwVC+9oqYZ3v9mFi9tnM8c+tH4/YYV172sdND+voHNaG/F78w2htJe5Kh16jXJnWS2Ul96keuaCforH4ycNuXy4ETnKv9OCXq/12It3kLBvRKtX/rVbk3B5UILJC5I/WsoQ71noVBgP6w2jv0hdyuAQFQsdk9jZoV1CHfgNPrg0KpHXvhLLW/ragVyjbbvxPIwoFi6HeT9Rq0q68WGlAlTy5uNJ+oW+HWyN6vHGfLvuEbjimd/Xqp6rJ0IJi19aMVMHs/oQEgJ9b+a9K/uynM5aRuFcxeT2gFmxyD5I2f9o6eMVpJAIiXr0GY7UndSpi9Bu0gOoXkVqRvHVDOxSL+/rSZLdSthtlb0BoujeCqt8Q7xk9p032TqfF+dZpp1K2I2VvQDqIsJBpUe942abXb4dCdUYm6dTF7f1CoAaVERAWAeaYOFFsZs7egNVwKABFcrk2H9YLBo0Hd6pi9BW0huvYvTMWGd7eII0FNzH6f5RAAOE/tfbsA0wU4kUDWjnfbqRf0du8+64xTlxBzQBNaOWcAIC+20KZFqwAxH25Sx21ti+5/+PEJY61p3MiImN+Z1zfeFNc4uRHuPX0aqK/tmly9YM/Usxd1dp6jlWgoRcyhgLZS26HLkPJUag3gVKhTuoF6V8Xg/HZzZml4I7ZceznW/dVRb0AT2gEQDWgt0A7SEl8s45yLFi8VYg5sh9ao7dCRuKioW+fyfEpErqmeRrWhgTb103YVp8ql1rnJK4g5UNCon7b7p21/bVEhJmbmPWgAwH322PNeLyVJ6pAQM/MedCeS0TL0ZF8uiomZeQ96AnHfL9IlL+1NUhgHQ8zM+1MERTHJ8o4CcgqamJn3oP9iewbu3ZcfTqxz1vP7VBMzQQMAOiQtnNRRCOJ10cRM0LgzPX7lwxPx9iXFHDETdBjdlfav+v1kflt7pIiZoMNoDHEltQ6+7dLETNCH7UGz+PyKdfBplyZmgg4GCDETdDBQiJmggwFDzAR91HDm60DROWeJmaBnHHVRK5nrU3o5JRAR1bh2CDET9IyhfiRZ8ORQpX1b45cvsz2xC6p29cgNad+mXamMEvPcFLXKJ/qgWXw+AEQHdm7/RKesenmyDC1A1cJoOfoXNjW+QYpaSVErlIzFj6vHbR2xXRc8avsojaBnp7vS/lV64tWRSddT/mxnZWDHZFkviCOMVtMkEsTTkTbOaTe/3fy+dTCxgi5qLSd2FPDgXnnGpLBP266pEds1SGIEPevdmR6/EgD+Nj4+XHI6/rx74+QC0PG+Qoy3ygkaExYQW9BKO+cwZWC1QOeVwlT97xiXFHPYMZVOnNqR71m/t2eoWlbqKdc9QFbzl/Svuazl/ya+E8noBOK+dWrX5lPUgWV5sYXUSWoAU4ArOIGrOFWOYXMK0CmkagCbF5f/ZrK8pwvp2Bhyyw4+qYBzaJFrKxB0OMWw5QSqoGATCxXzGeFZjizm6pfrdUDtOnqNa+nJoY/V9mhIVPuXmLlDZ/inlqlDBQ5ddgw14e/4WPPbjBOaMYJmjKAZQTNG0IwRNGMEzRhBM4JmjKAZI2jGZgL0zi0P8GWOLIh2bnlAOKEZVw7GCJqxuQLNPZqFsD9zQjOuHIx5AZprB/N93eCEZlw5GPMGNNcO5vO6wQnNwl85OKWZr9P5v05oomY+YubKwcJfOTilma/T+V0nNFEznzBz5WCts3JwSjPfpvP/PaGJmvmA+T2tHETNso75Pe/QRM2yjPmIDgqJmmUV8xGBJmqWVcxHDJqoWRYxAzN0Lz3eGo7NN+SjntCc1ixrmGdsQnNas6wMQ5X1B8iIeV4nNKc1m8+hN2fTlLiJeC7+P/OyHhA3EQcFmsAJeLb6N2AqIJqvsfaBAAAAAElFTkSuQmCC">
-<title>OTC在庫台帳 — とみながグループ</title>
+<title>OTCLinker Pro — とみながグループ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&family=Shippori+Mincho+B1:wght@700&family=Klee+One:wght@400;600&family=Yuji+Syuku&family=Hachi+Maru+Pop&family=RocknRoll+One&family=Reggae+One&family=Stick&family=DotGothic16&display=swap" rel="stylesheet">
@@ -33,6 +33,11 @@ body { min-height: 100vh; background: var(--hakuji); color: var(--ink); font-fam
   #tab-share.active { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
 }
 .header { display: flex; align-items: center; justify-content: space-between; padding: 18px 2px 12px; gap: 10px; }
+.dot-pet { margin-left: auto; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); border-radius: 10px; padding: 4px 6px 2px; cursor: pointer; line-height: 0; }
+.dot-pet svg { image-rendering: pixelated; }
+.dot-pet.bounce { animation: petBounce 0.5s ease; }
+@keyframes petBounce { 0%{transform:none} 35%{transform:translateY(-5px) scale(1.08)} 70%{transform:translateY(1px)} 100%{transform:none} }
+@media print { .dot-pet { display: none !important; } }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand-mark { width: 44px; height: 44px; border-radius: 8px; background: var(--ai); color: #fff; font-family: var(--serif); font-size: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .brand h1 { font-family: var(--serif); font-size: 21px; font-weight: 600; letter-spacing: 0.06em; color: var(--ai-deep); }
@@ -145,6 +150,8 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .info-pop-btn.close { color: #7B8794; border-top: 1px solid var(--line); }
 
 .empty { text-align: center; padding: 30px 10px; color: #5C6B78; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+.print-selbar { font-size: 12.5px; color: #5C6B78; background: #F4F8F6; border: 1px solid #DCE7E1; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; }
+.print-selbar .link { font-size: 12.5px; }
 .steps { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin: 2px 0 12px; font-size: 12px; color: #5C6B78; }
 .steps .stp { display: inline-flex; align-items: center; gap: 5px; background: #EEF3F1; border-radius: 999px; padding: 4px 11px 4px 5px; }
 .steps .stp b { width: 17px; height: 17px; border-radius: 50%; background: var(--ai); color: #fff; font-size: 10.5px; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; }
@@ -318,7 +325,7 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
 <div id="login-gate">
   <div class="login-card">
     <div style="text-align:center"><span class="brand-mark" style="display:inline-flex"><svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true"><g transform="rotate(-45 24 24)"><rect x="6" y="17" width="36" height="14" rx="7" fill="#ffffff"/><path d="M13 17h11v14H13a7 7 0 0 1-7-7 7 7 0 0 1 7-7z" fill="#B7402B"/><rect x="23" y="17" width="1.6" height="14" fill="#14283C" opacity="0.35"/><rect x="6.8" y="17.8" width="34.4" height="12.4" rx="6.2" fill="none" stroke="#14283C" stroke-opacity="0.28" stroke-width="1.2"/></g></svg></span></div>
-    <h2>OTC在庫台帳</h2>
+    <h2>OTCLinker Pro</h2>
     <p class="hint" style="text-align:center">とみながグループ 専用ページです。<br>配布された会員IDとパスワードを入力してください。</p>
     <label>会員ID <input id="login-id" autocomplete="username"></label>
     <label>パスワード <input type="password" id="login-pass" autocomplete="current-password" onkeydown="if(event.key==='Enter')checkLogin()"></label>
@@ -338,10 +345,11 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
     <div class="brand">
       <span class="brand-mark"><svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true"><g transform="rotate(-45 24 24)"><rect x="6" y="17" width="36" height="14" rx="7" fill="#ffffff"/><path d="M13 17h11v14H13a7 7 0 0 1-7-7 7 7 0 0 1 7-7z" fill="#B7402B"/><rect x="23" y="17" width="1.6" height="14" fill="#14283C" opacity="0.35"/><rect x="6.8" y="17.8" width="34.4" height="12.4" rx="6.2" fill="none" stroke="#14283C" stroke-opacity="0.28" stroke-width="1.2"/></g></svg></span>
       <div>
-        <h1>OTC在庫台帳</h1>
+        <h1>OTCLinker Pro</h1>
         <p class="brand-sub" id="brand-sub">市販薬の登録・値札・備蓄共有</p>
       </div>
     </div>
+    <button class="dot-pet" id="dot-pet" onclick="dotPetInfo()" aria-label="育成キャラクター"></button>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -436,6 +444,7 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
 
   <!-- ============ 値札・POP ============ -->
   <section class="panel" id="tab-print">
+    <div id="print-selbar" class="print-selbar"></div>
     <div class="seg">
       <button id="seg-tags" class="on" onclick="setPrintKind('tags')">値札シート</button>
       <button id="seg-pop" onclick="setPrintKind('pop')">販促POP</button>
@@ -657,7 +666,7 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
   </section>
 
   <div class="toast" id="toast"></div>
-  <footer class="foot">OTC在庫台帳 — とみながグループ 店舗向けツール<br><span class="ver">版 2026-07-24 F(カメラ・複数POP対応)</span></footer>
+  <footer class="foot">OTCLinker Pro — とみながグループ 店舗向けツール<br><span class="ver">版 2026-07-24 G(OTCLinker Pro)</span></footer>
 </div>
 
 <script>
@@ -1376,7 +1385,7 @@ function expiryTdStyle(e){
 }
 function toggleSelect(id){
   selected.has(id) ? selected.delete(id) : selected.add(id);
-  renderList(); renderTags();
+  renderList(); renderTags(); updatePrintSelbar_();
 }
 function currentFiltered(){
   const q = document.getElementById("q").value.trim().toLowerCase();
@@ -1414,6 +1423,7 @@ function setCatFilter(c){
   renderList();
 }
 function renderList(){
+  setTimeout(renderDotPet, 0);
   const cf0 = document.getElementById("cat-filter").value;
   const counts = {};
   S.items.forEach(it => { counts[it.category] = (counts[it.category] || 0) + 1; });
@@ -1438,7 +1448,13 @@ function renderList(){
   const bar = document.getElementById("select-bar");
   if (selected.size){
     bar.style.display = "block";
-    bar.innerHTML = selected.size + ' 品目を選択中 — <button class="link" onclick="setPrintKind(\'tags\');showTab(\'print\')">値札を作成</button> <button class="link" style="color:var(--shu)" onclick="removeSelected()">選択を削除</button> <button class="link" onclick="selected.clear();renderList();renderTags()">選択解除</button>';
+    bar.innerHTML = selected.size + ' 品目を選択中 — '
+      + '<button class="link" onclick="showTab(\'print\');setPrintKind(\'tags\')">値札</button>'
+      + '<button class="link" onclick="showTab(\'print\');setPrintKind(\'pop\')">POP</button>'
+      + '<button class="link" onclick="showTab(\'print\');setPrintKind(\'cards\')">商品カード</button>'
+      + '<span style="color:#C9CFD4">｜</span>'
+      + '<button class="link" style="color:var(--shu)" onclick="removeSelected()">削除</button>'
+      + '<button class="link" onclick="selected.clear();renderList();renderTags()">解除</button>';
   } else bar.style.display = "none";
 
   const area = document.getElementById("list-area");
@@ -1511,7 +1527,7 @@ function backupData(){
   const blob = new Blob([JSON.stringify(S)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "OTC台帳バックアップ_" + today() + ".json";
+  a.download = "OTCLinkerPro控え_" + today() + ".json";
   a.click();
   URL.revokeObjectURL(a.href);
   toast("控えを保存しました(ダウンロードフォルダ)");
@@ -1555,10 +1571,94 @@ function setPrintKind(k){
   document.getElementById("print-tags-wrap").style.display = k==="tags" ? "block" : "none";
   document.getElementById("print-pop").style.display = k==="pop" ? "block" : "none";
   document.getElementById("print-cards").style.display = k==="cards" ? "block" : "none";
+  updatePrintSelbar_();
   if (k==="tags") renderTags();
   else if (k==="pop"){ fillPopSelect(); renderPop(); }
   else renderCards();
 }
+function updatePrintSelbar_(){
+  const bar = document.getElementById("print-selbar");
+  if (!bar) return;
+  const n = selected.size;
+  const goList = '<button class="link" onclick="showTab(\'list\')">在庫リストで選ぶ</button>';
+  if (printKind === "pop"){
+    bar.innerHTML = n
+      ? '値札・カードと同じチェック中の商品(' + n + '品目)が「対象商品」の先頭に並んでいます'
+      : 'POPは下の「対象商品」から選びます(' + goList + 'と連動)';
+  } else {
+    bar.innerHTML = n
+      ? '対象: チェック中の ' + n + ' 品目(' + goList + ')'
+      : 'まだ商品が選ばれていません — ' + goList;
+  }
+}
+/* ============ 育成ドットキャラ(品目数で進化) ============ */
+const DOT_PAL = { K:"#2B2B2B", W:"#FFFFFF", C:"#FFF3D6", Y:"#FFD84D", O:"#F08A3C", R:"#D0342C", P:"#F4A7B9", B:"#5FA8D3", N:"#8A5A2B", G:"#FFD700", E:"#7DC383", V:"#9B7EDE", S:"#C0C8CF", D:"#3E9B4F", M:"#FF8FB1" };
+const DOT_SPRITES = {
+  egg: ["............","....KKKK....","...KCCCCK...","..KCCCCCCK..","..KCCWCCCK..",".KCCWWCCCCK.",".KCCCCCCCCK.",".KCCCCCCCCK.",".KCCCCCCCCK.","..KCCCCCCK..","...KCCCCK...","....KKKK...."],
+  chick1: ["............","............","....KKKK....","...KYYYYK...","..KYKYYYYK..","..KYYYYYOK..","...KYYYYK...","...KYYYYK...","..KYYYYYYK..","..KYYYYYYK..","...KOKKOK...","............"],
+  chick2: ["............","...KKKK.....","..KYYYYK....",".KYKYYYYK...",".KYYYYYOKK..",".KYYYYYYK...",".KYYYYYYYK..","KYYKYYYYYK..","KYYKYYYYYK..",".KYYYYYYK...","..KYYYYK....","..KOK.KOK..."],
+  chick3: ["....KKK.....","...KRRRK....","..KKYYYYK...",".KYKYYYYKK..",".KYYYYYYOKK.",".KYYYYYYYK..","KYYKYYYYYYK.","KYYKYYYYYYK.","KYYKYYYYYYK.",".KYYYYYYYK..","..KYYYYYK...","..KOK..KOK.."],
+  rooster: ["...KRRK.....","..KRRRRK....","..KKWWWWK...",".KWKWWWWKK..",".KWWWWWWOKK.","KRKWWWWWWK..","KRRKWWWWWWK.",".KKWWWWWWWK.","KWWKWWWWWWK.",".KWWWWWWWK..","..KWWWWWK...","..KOK..KOK.."],
+  legend: ["G..KRRK...G.",".GKRRRRKG...","..KKGGGGK...",".KGKGGGGKK..","GKGGGGGGOKKG","KRKGGGGGGK..","KRRKGGGGGGK.",".KKGGGGGGGK.","KGGKGGGGGGKG",".KGGGGGGGK..","G.KGGGGGK.G.","..KOK..KOKG."],
+  cat: ["............",".K.K...K.K..",".KKKK.KKKK..",".KSSSKSSSK..","KSKSSSSSKSK.","KSSSSKSSSSK.","KSSSKKKSSSK.",".KSSSSSSSK..",".KSSSSSSSK..","KSSKSSSKSSK.",".KSSSSSSSK..","..KK...KK..."],
+  frog: ["............","..KK...KK...",".KDDK.KDDK..",".KDWDKDWDK..",".KDDDDDDDK..","KDDDDDDDDDK.","KDKDDDDDKDK.","KDDDDDDDDDK.",".KDDKKKDDK..",".KDDDDDDDK..","..KDDDDDK...","..KK...KK..."],
+  robot: ["....KKKK....","...KSSSSK...","..KSKSSKSK..","..KSSSSSSK..","...KKKKKK...","..KSSSSSSK..",".KSKSSSSKSK.",".KSKSSSSKSK.","..KSSSSSSK..","...KSKKSK...","...KSK.KSK..","..KKK..KKK.."],
+  rabbit: [".KK.....KK..","KPPK...KPPK.","KPPK...KPPK.","KPPK...KPPK.",".KPPKKKPPK..",".KPPPPPPPK..","KPKPPPPPKPK.","KPPPPKPPPPK.","KPPPPPPPPPK.",".KPPPPPPPK..","..KPPPPPK...","..KK...KK..."],
+  dragon: ["..K.....K...",".KVK...KVK..","KVVVK.KVVVK.","KVKVVKVVKVK.","KVVVVVVVVVK.",".KVVKVVKVVK.",".KVVVVVVVK..","KVKVVVVVKVK.","KVVKKKKKVVK.",".KVVVVVVVK..","..KVVVVVK...","..KK...KK..."],
+  penguin: ["....KKKK....","...KKKKKK...","..KKWKKWKK..","..KKKOKKKK..",".KKWWWWWKK..",".KKWWWWWKK..","KKKWWWWWKKK.","KKKWWWWWKKK.",".KKWWWWWKK..","..KKWWWKK...","..KOK.KOK...","............"],
+  flower: ["....KMMK....","..KMMKKMMK..","..KMKGGKMK..",".KMKGGGGKMK.","..KMKGGKMK..","..KMMKKMMK..","....KDDK....","....KDDK....","..K.KDDK.K..",".KDKKDDKKDK.","..KDDDDDDK..","....KDDK...."]
+};
+const DOT_RANDOMS = ["cat","frog","robot","rabbit","dragon","penguin","flower"];
+function dotStage(){
+  const n = (S.items || []).length;
+  if (n >= 49){
+    // 品目数を種にした擬似乱数で安定的に「ランダム」なキャラを選ぶ(増えるたび変化)
+    const idx = (n * 2654435761 % 4294967296) % DOT_RANDOMS.length;
+    return { key: DOT_RANDOMS[idx], name: "なかま: " + ({cat:"ねこ",frog:"カエル",robot:"ロボット",rabbit:"ウサギ",dragon:"ドラゴン",penguin:"ペンギン",flower:"お花"})[DOT_RANDOMS[idx]], n: n, next: null };
+  }
+  if (n >= 48) return { key: "legend", name: "伝説の鶏", n: n, next: 49 };
+  if (n >= 40) return { key: "rooster", name: "雄の鶏", n: n, next: 48 };
+  if (n >= 30) return { key: "chick3", name: "若鶏", n: n, next: 40 };
+  if (n >= 20) return { key: "chick2", name: "ひよこ(成長中)", n: n, next: 30 };
+  if (n >= 10) return { key: "chick1", name: "ひよこ", n: n, next: 20 };
+  return { key: "egg", name: "たまご", n: n, next: 10 };
+}
+function dotSvg(key, px){
+  const rows = DOT_SPRITES[key] || DOT_SPRITES.egg;
+  const cell = px / 12;
+  let r = '<svg width="'+px+'" height="'+px+'" viewBox="0 0 '+px+' '+px+'" shape-rendering="crispEdges">';
+  for (let y = 0; y < rows.length; y++){
+    for (let x = 0; x < rows[y].length; x++){
+      const c = DOT_PAL[rows[y][x]];
+      if (c) r += '<rect x="'+(x*cell)+'" y="'+(y*cell)+'" width="'+cell+'" height="'+cell+'" fill="'+c+'"/>';
+    }
+  }
+  return r + '</svg>';
+}
+let __lastDotKey = null;
+function renderDotPet(){
+  const el = document.getElementById("dot-pet");
+  if (!el) return;
+  const st = dotStage();
+  el.innerHTML = dotSvg(st.key, 40);
+  el.title = st.name + "(" + st.n + " 品目)";
+  if (__lastDotKey && __lastDotKey !== st.key){
+    el.classList.remove("bounce"); void el.offsetWidth; el.classList.add("bounce");
+    if (navigator.vibrate) navigator.vibrate(30);
+    toast("キャラクターが「" + st.name + "」になりました!");
+  }
+  __lastDotKey = st.key;
+}
+function dotPetInfo(){
+  const st = dotStage();
+  const msg = st.next
+    ? st.name + "(" + st.n + "品目) — あと " + (st.next - st.n) + " 品目で進化します!"
+    : st.name + "(" + st.n + "品目) — 品目が増えると別のキャラに変化します!";
+  toast(msg);
+  const el = document.getElementById("dot-pet");
+  el.classList.remove("bounce"); void el.offsetWidth; el.classList.add("bounce");
+}
+
 /* ============ 画像処理(縮小・背景削除) ============ */
 // ファイル→縮小したdataURL
 function readImageFile_(file, maxPx){
@@ -1698,7 +1798,7 @@ function renderCardEdit_(){
   const box = document.getElementById("card-edit");
   const items = cardItems_();
   if (!items.length){
-    box.innerHTML = '<p class="hint">まだ商品が選ばれていません。在庫リストでカードにしたい商品にチェックを入れてください。</p>';
+    box.innerHTML = '<div class="empty"><p>在庫リストで商品にチェックを入れると、ここに商品カードが並びます。</p><button class="btn" onclick="showTab(\'list\')">在庫リストで商品を選ぶ</button></div>';
     return;
   }
   box.innerHTML = items.map(function(it){
@@ -1990,8 +2090,15 @@ function renderTags(){
 function fillPopSelect(){
   const sel = document.getElementById("pop-item");
   const cur = sel.value;
-  sel.innerHTML = '<option value="">— 商品を選択 —</option>' + S.items.map(it => '<option value="'+it.id+'">'+esc(it.name)+'</option>').join("");
+  const checked = S.items.filter(function(it){ return selected.has(it.id); });
+  const others = S.items.filter(function(it){ return !selected.has(it.id); });
+  const opt = function(it){ return '<option value="'+it.id+'">'+esc(it.name)+'</option>'; };
+  let h = '<option value="">— 商品を選択 —</option>';
+  if (checked.length) h += '<optgroup label="✔ 在庫リストでチェック中">' + checked.map(opt).join("") + '</optgroup>';
+  h += checked.length ? '<optgroup label="その他の商品">' + others.map(opt).join("") + '</optgroup>' : others.map(opt).join("");
+  sel.innerHTML = h;
   if (cur) sel.value = cur;
+  if (!sel.value && checked.length){ sel.value = checked[0].id; }
 }
 function defaultPopFont(){ return { font: "serif", nameSize: 30, priceSize: 52, copySize: 20, size: "a5", width: 148, height: 0, imgSize: 55, nobg: false, fields: { copy:true, name:true, maker:true, price:true, cat:true, note:true, img:true } }; }
 function popFont_(){ return Object.assign(defaultPopFont(), S.popFont || {}); }
@@ -2447,6 +2554,7 @@ showExpiryAlert();
 showBackupAlert();
 renderSavedPops();
 renderStorageInfo();
+renderDotPet();
 </script>
 </body>
 </html>
