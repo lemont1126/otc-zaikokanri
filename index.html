@@ -115,6 +115,26 @@ input:focus, select:focus { outline: 2px solid var(--ai); outline-offset: -1px; 
 .ph-cat-head { font-size: 13px; font-weight: 600; color: var(--ai-deep); border-left: 4px solid var(--ai); padding-left: 8px; margin-bottom: 6px; }
 .ph-cat-n { font-weight: 400; color: #7B8794; font-size: 12px; }
 .ph-detail-title { font-family: var(--serif); font-size: 17px; color: var(--ai-deep); }
+.card-sheet { display: flex; flex-wrap: wrap; gap: 4mm; margin-top: 14px; }
+.pcard { width: 52mm; border: 1.5px dashed #7FBF9A; background: #fff; display: flex; flex-direction: column; overflow: hidden; break-inside: avoid; page-break-inside: avoid; }
+.pcard-head { background: #8FCBA8; color: #fff; font-weight: 700; text-align: center; font-size: 15px; padding: 5px 0; letter-spacing: 0.15em; }
+.pcard-note { font-size: 8.5px; text-align: center; color: #333; padding: 4px 4px 2px; line-height: 1.4; }
+.pcard-label { background: #F06A7E; color: #fff; font-weight: 700; font-size: 11px; text-align: center; margin: 4px 8px 2px; padding: 3px 4px; }
+.pcard-cat { font-size: 8.5px; color: #333; padding: 2px 8px 0; }
+.pcard-name { font-weight: 700; font-size: 12.5px; line-height: 1.3; padding: 0 8px; background: linear-gradient(transparent 65%, #FFF176 65%); align-self: flex-start; margin: 0 8px; }
+.pcard-feature { font-size: 9.5px; color: #222; padding: 3px 8px; line-height: 1.45; }
+.pcard-img { display: flex; align-items: center; justify-content: center; min-height: 26mm; max-height: 30mm; padding: 2px 6px; }
+.pcard-img img { max-width: 100%; max-height: 28mm; object-fit: contain; }
+.pcard-img-empty { color: #B7C2C8; font-size: 10px; border: 1px dashed #D5DDDA; border-radius: 6px; width: 90%; height: 24mm; display: flex; align-items: center; justify-content: center; }
+.pcard-bottom { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; padding: 2px 6px 6px; gap: 4px; }
+.pcard-price { font-weight: 700; font-size: 15px; white-space: nowrap; }
+.pcard-price small { font-weight: 400; font-size: 8.5px; }
+.pcard-barcode svg { height: 26px; }
+.card-edit-row { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.card-edit-name { font-weight: 600; font-size: 13.5px; }
+.card-edit-row input[type="text"] { width: 100%; }
+.card-edit-imgrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; }
+.card-edit-thumb { width: 44px; height: 44px; object-fit: contain; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
 .saved-pop-list { display: flex; flex-direction: column; gap: 4px; }
 .saved-pop { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: #fff; }
 .saved-pop .link { flex: 1; text-align: left; }
@@ -207,16 +227,16 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
 .exp-o { background: #F0B27A; color: #5A3413; }
 .exp-y { background: #F5DE7A; color: #5A4A00; }
 .pop-card.ps-fun { border: 3px dashed #F08A3C; border-radius: 22px; background: #FFF9EC; }
-.ps-fun .pop-copy { color: #2E9E9B; border-color: #F08A3C; font-family: var(--sans); }
-.ps-fun .pop-name { color: #E2574C; font-family: var(--sans); }
+.ps-fun .pop-copy { color: #2E9E9B; border-color: #F08A3C; }
+.ps-fun .pop-name { color: #E2574C; }
 .ps-fun .pop-yen { color: #F08A3C; }
 .pop-card.ps-oshare { border: 1px solid #B08D3E; outline: 1px solid #B08D3E; outline-offset: -7px; }
 .ps-oshare .pop-copy { border-color: #B08D3E; letter-spacing: 0.2em; }
 .ps-oshare .pop-yen { color: #1F2933; }
 .ps-oshare .pop-seal { display: none; }
 .pop-card.ps-medatsu { background: #FFE94D; border: 4px solid #1F2933; }
-.ps-medatsu .pop-copy { color: #1F2933; border-color: #1F2933; font-family: var(--sans); font-weight: 700; }
-.ps-medatsu .pop-name { font-family: var(--sans); }
+.ps-medatsu .pop-copy { color: #1F2933; border-color: #1F2933; font-weight: 700; }
+
 .ps-medatsu .pop-yen { color: #C0392B; }
 .pop-card.ps-sale { border: 4px solid #C0392B; }
 .ps-sale .pop-copy { color: #C0392B; border-color: #C0392B; }
@@ -242,6 +262,7 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
 .ps-board .pop-yen { color: #FFE94D; }
 .ps-board .pop-note { color: #E8EFE6; }
 .ps-board .pop-seal { display: none; }
+.ps-new .pop-seal { display: none; }
 .pop-card.ps-new { border: 3px solid #2E7D46; background: #F4FBF6; }
 .ps-new .pop-copy { color: #2E7D46; border-color: #2E7D46; }
 .ps-new .pop-yen { color: #2E7D46; }
@@ -270,8 +291,9 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
   /* 印刷対象以外を完全に消す(場所も詰める) */
   body > .chrome > *:not(.panel),
   .panel:not(.active),
-  .panel.active > *:not(#print-tags-wrap):not(#print-pop),
+  .panel.active > *:not(#print-tags-wrap):not(#print-pop):not(#print-cards),
   #print-tags-wrap > *:not(#print-tags),
+  #print-cards > *:not(#card-sheet),
   #print-tags > .row,
   .tabs, .header, .foot, #login-gate, .toast {
     display: none !important;
@@ -407,6 +429,7 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
     <div class="seg">
       <button id="seg-tags" class="on" onclick="setPrintKind('tags')">値札シート</button>
       <button id="seg-pop" onclick="setPrintKind('pop')">販促POP</button>
+      <button id="seg-cards" onclick="setPrintKind('cards')">商品カード</button>
     </div>
     <div id="print-tags-wrap">
       <details class="settings" id="tag-style-settings">
@@ -493,6 +516,19 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
       </div>
       <div class="pop-wrap print-target" id="pop-preview"></div>
     </div>
+    <div id="print-cards" style="display:none">
+      <div class="form">
+        <p class="hint">在庫リストでチェックした商品の「店頭用商品カード」を作ります。商品の代わりに売場に置き、お客さまにレジへ持参してもらうカードです。</p>
+        <div class="row gap wrap">
+          <button class="btn ghost" onclick="fetchCardInfo()">写真・特徴を自動取得</button>
+          <button class="btn" onclick="window.print()">カードを印刷</button>
+        </div>
+        <p class="hint" id="card-msg"></p>
+        <p class="hint">印刷は用紙を<strong>横向き</strong>にすると見本のように5枚並びになります。</p>
+        <div id="card-edit"></div>
+      </div>
+      <div id="card-sheet" class="card-sheet print-target"></div>
+    </div>
   </section>
 
   <!-- ============ 会員間共有 ============ -->
@@ -554,7 +590,7 @@ table.inv td { border-top: 1px solid var(--line); padding: 6px 8px; white-space:
   </section>
 
   <div class="toast" id="toast"></div>
-  <footer class="foot">OTC在庫台帳 — とみながグループ 店舗向けツール<br><span class="ver">版 2026-07-24 C(Webフォント対応)</span></footer>
+  <footer class="foot">OTC在庫台帳 — とみながグループ 店舗向けツール<br><span class="ver">版 2026-07-24 D(商品カード対応)</span></footer>
 </div>
 
 <script>
@@ -1111,9 +1147,23 @@ function __closePopOnce(e){
   if (pop && !pop.contains(e.target)) closeInfoPop();
 }
 function openPmdaForm(){
-  try { if (navigator.clipboard) navigator.clipboard.writeText(__infoKw); } catch(e){}
+  const kw = __infoKw || "";
+  let copied = false;
+  // 方法1: 古典的な方法(iOS Safariで確実)
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = kw;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed"; ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select(); ta.setSelectionRange(0, kw.length);
+    copied = document.execCommand("copy");
+    document.body.removeChild(ta);
+  } catch(e){}
+  // 方法2: 新API(使える環境では上書き)
+  try { if (navigator.clipboard) navigator.clipboard.writeText(kw).then(function(){}, function(){}); } catch(e){}
   window.open("https://www.pmda.go.jp/PmdaSearch/otcSearch/", "_blank", "noopener");
-  toast("商品名をコピーしました。検索欄に貼り付けてください");
+  toast(copied ? '「' + kw + '」をコピーしました。販売名の欄を長押し→貼り付け' : 'コピーできませんでした。商品名: ' + kw);
 }
 function closeInfoPop(){ const p = document.getElementById("info-pop"); if (p) p.style.display = "none"; }
 function editItem(id){
@@ -1390,9 +1440,138 @@ function setPrintKind(k){
   printKind = k;
   document.getElementById("seg-tags").className = k==="tags" ? "on" : "";
   document.getElementById("seg-pop").className = k==="pop" ? "on" : "";
+  document.getElementById("seg-cards").className = k==="cards" ? "on" : "";
   document.getElementById("print-tags-wrap").style.display = k==="tags" ? "block" : "none";
   document.getElementById("print-pop").style.display = k==="pop" ? "block" : "none";
-  if (k==="tags") renderTags(); else { fillPopSelect(); renderPop(); }
+  document.getElementById("print-cards").style.display = k==="cards" ? "block" : "none";
+  if (k==="tags") renderTags();
+  else if (k==="pop"){ fillPopSelect(); renderPop(); }
+  else renderCards();
+}
+/* ============ 店頭用商品カード ============ */
+function cardMeta_(jan){
+  S.cardMeta = S.cardMeta || {};
+  S.cardMeta[jan] = S.cardMeta[jan] || {};
+  return S.cardMeta[jan];
+}
+function cardItems_(){
+  return S.items.filter(function(it){ return selected.has(it.id); });
+}
+function setCardMeta(jan, key, val){
+  cardMeta_(jan)[key] = val;
+  save();
+  renderCardSheet_();
+}
+function renderCards(){
+  renderCardEdit_();
+  renderCardSheet_();
+}
+function renderCardEdit_(){
+  const box = document.getElementById("card-edit");
+  const items = cardItems_();
+  if (!items.length){
+    box.innerHTML = '<p class="hint">まだ商品が選ばれていません。在庫リストでカードにしたい商品にチェックを入れてください。</p>';
+    return;
+  }
+  box.innerHTML = items.map(function(it){
+    const m = (S.cardMeta || {})[it.jan] || {};
+    return '<div class="card-edit-row">'
+      + '<div class="card-edit-name">' + esc(it.name || "(名称未設定)") + '</div>'
+      + '<label>効能ラベル(ピンク帯) <input type="text" value="' + esc(m.label || "") + '" placeholder="例:解熱鎮痛・かぜ薬など" oninput="setCardMeta(\'' + it.jan + '\',\'label\',this.value)"></label>'
+      + '<label>商品の特徴 <input type="text" value="' + esc(m.feature || "") + '" placeholder="例:痛みに速く効く" oninput="setCardMeta(\'' + it.jan + '\',\'feature\',this.value)"></label>'
+      + '<div class="card-edit-imgrow">'
+      +   (m.img ? '<img class="card-edit-thumb" src="' + esc(m.img) + '">' : '<span style="color:#9AA7AF">写真なし</span>')
+      +   '<label class="link" style="cursor:pointer">画像を選ぶ<input type="file" accept="image/*" style="display:none" onchange="cardImageFile(event,\'' + it.jan + '\')"></label>'
+      +   (m.img ? '<button class="link" onclick="setCardMeta(\'' + it.jan + '\',\'img\',\'\')">削除</button>' : '')
+      + '</div></div>';
+  }).join("");
+}
+function renderCardSheet_(){
+  const sheet = document.getElementById("card-sheet");
+  const items = cardItems_();
+  sheet.innerHTML = items.map(function(it){
+    const m = (S.cardMeta || {})[it.jan] || {};
+    const label = m.label || "";
+    const feature = m.feature || "";
+    const catTxt = it.category ? "[" + it.category + "]" : "";
+    return '<div class="pcard">'
+      + '<div class="pcard-head">商品カード</div>'
+      + '<div class="pcard-note">お求めの際はこのカードを<br>レジまでお持ちください。</div>'
+      + (label ? '<div class="pcard-label">' + esc(label) + '</div>' : '')
+      + (catTxt ? '<div class="pcard-cat">' + esc(catTxt) + '</div>' : '')
+      + '<div class="pcard-name">' + esc(it.name || "") + '</div>'
+      + (feature ? '<div class="pcard-feature">' + esc(feature) + '</div>' : '')
+      + '<div class="pcard-img">' + (m.img ? '<img src="' + esc(m.img) + '" onerror="this.parentNode.innerHTML=\'<div class=&quot;pcard-img-empty&quot;>画像を読み込めませんでした</div>\'">' : '<div class="pcard-img-empty">写真なし</div>') + '</div>'
+      + '<div class="pcard-bottom">'
+      +   '<span class="pcard-barcode">' + (it.jan ? ean13Svg(it.jan, 26, true) : '') + '</span>'
+      +   '<span class="pcard-price">' + (it.price !== "" && it.price != null ? Number(it.price).toLocaleString("ja-JP") : "") + '円<small>(税込)</small></span>'
+      + '</div></div>';
+  }).join("");
+}
+function cardImageFile(ev, jan){
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) return;
+  const img = new Image();
+  const fr = new FileReader();
+  fr.onload = function(){
+    img.onload = function(){
+      // 300pxに縮小して保存(容量対策)
+      const max = 300;
+      let w = img.width, h = img.height;
+      if (w > h && w > max){ h = Math.round(h * max / w); w = max; }
+      else if (h > max){ w = Math.round(w * max / h); h = max; }
+      const cv = document.createElement("canvas");
+      cv.width = w; cv.height = h;
+      cv.getContext("2d").drawImage(img, 0, 0, w, h);
+      setCardMeta(jan, "img", cv.toDataURL("image/jpeg", 0.85));
+      renderCardEdit_();
+      toast("画像を取り込みました");
+    };
+    img.src = fr.result;
+  };
+  fr.readAsDataURL(f);
+}
+async function fetchCardInfo(){
+  const msg = document.getElementById("card-msg");
+  const items = cardItems_();
+  if (!items.length){ msg.textContent = "先に在庫リストで商品をチェックしてください。"; return; }
+  if (!S.gasUrl || !S.apiKeys.yahoo){
+    msg.innerHTML = "自動取得には、「その他」タブで<strong>共有サーバーURL</strong>と<strong>Yahoo! Client ID</strong>の両方の設定が必要です。設定後にもう一度お試しください。なお画像は下の「画像を選ぶ」から手動でも登録できます。";
+    return;
+  }
+  let done = 0, fail = 0;
+  for (let i = 0; i < items.length; i++){
+    const it = items[i];
+    const m = cardMeta_(it.jan);
+    if (m.img && m.feature){ continue; }
+    msg.textContent = "取得中… (" + (i+1) + "/" + items.length + ") " + (it.name || "");
+    try {
+      const u = S.gasUrl + "?action=yahoo&appid=" + encodeURIComponent(S.apiKeys.yahoo) + "&jan=" + encodeURIComponent(it.jan);
+      const r = await fetch(u);
+      const d = await r.json();
+      const hits = (d && d.hits) || [];
+      if (hits.length){
+        const h0 = hits[0];
+        if (!m.img){
+          const imgUrl = (h0.exImage && h0.exImage.url) || (h0.image && (h0.image.medium || h0.image.small)) || "";
+          if (imgUrl) m.img = imgUrl;
+        }
+        if (!m.feature){
+          let ftxt = "";
+          for (let j = 0; j < hits.length && !ftxt; j++){
+            if (hits[j].headLine) ftxt = hits[j].headLine;
+          }
+          if (!ftxt && h0.description) ftxt = String(h0.description);
+          ftxt = cleanItemName(ftxt).slice(0, 45);
+          if (ftxt) m.feature = ftxt;
+        }
+        done++;
+      } else fail++;
+    } catch(e){ fail++; }
+    save();
+  }
+  renderCards();
+  msg.textContent = "自動取得完了: " + done + " 件取得" + (fail ? " / " + fail + " 件は見つかりませんでした(手動で画像・特徴を入力できます)" : "") + "。内容を確認・編集してから印刷してください。";
 }
 const FONTS = {
   serif:   { label: "明朝体", css: "'Noto Serif JP','Hiragino Mincho ProN',serif" },
@@ -1681,7 +1860,7 @@ function renderPop(){
   const pf = popFont_();
   const ff = fontCssAttr(pf.font);
   const x = pf.fields || {};
-  let h = '<div class="pop-card ps-' + ps + '" style="font-family:'+ff+'">';
+  let h = '<div class="pop-card ps-' + ps + '" style="font-family:'+ff+' !important">';
   if (ps === "sale") h += '<div class="pop-sale-badge">特売</div>';
   if (ps === "new") h += '<div class="pop-new-badge">NEW</div>';
   if (x.copy !== false) h += '<div class="pop-copy" style="font-family:'+ff+' !important;font-size:'+pf.copySize+'px !important">'+esc(copy)+'</div>';
